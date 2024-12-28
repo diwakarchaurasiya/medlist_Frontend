@@ -8,19 +8,21 @@ const DoctorsListing = () => {
   let { speciality } = useParams();
   let [specialists, setSpecialists] = useState([]);
   let [showFilter, setShowFilter] = useState(false);
-  const applyFilter = () => {
-    
+  const applyFilter = async () => {
+    let apiResponse = await fetch("http://localhost:5000/api/doctor")
+      .then((res) => res.json())
+      .catch((err) => console.log(err))
     if (speciality) {
       if (speciality === 'all') {
-        setSpecialists(doctors)
+        setSpecialists(apiResponse.data)
       }
       else {
-        setSpecialists(doctors.filter(doc => doc.speciality === speciality))
+        setSpecialists(apiResponse.data.filter(doc => doc.specialization === speciality))
     }
       }
   }
   useEffect(() => {
-    applyFilter();
+        applyFilter();
  },[speciality])
   return (
     <>

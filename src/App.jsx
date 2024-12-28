@@ -13,6 +13,9 @@ import MyProfile from "./components/MyProfile/MyProfile"
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Myappoitment from "./components/MyAppointments/Myappoitment"
+import DoctorForm from "./components/doctorOnboardingForm/DoctorForm"
+import PatientForm from "./components/PatientForm/PatientForm"
+
 function App() {
 
   return (
@@ -29,6 +32,10 @@ function App() {
           <Route path='signup' element={<Signup />} />
           <Route path='my-appointments' element={<Myappoitment />} />
           <Route path='doctors/:speciality' element={<DoctorsListing />} />
+
+          // creation of doctor and patient
+          <Route path='doctor/register' element={<DoctorForm />} />
+          <Route path='patient/register' element={<PatientForm />} />
         <Route path="login" element={<Login />} />
           <Route path='*' element={<Invalid/>} />
         </Routes> 

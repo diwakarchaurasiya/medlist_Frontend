@@ -1,66 +1,116 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
+import React, { useState } from "react";
 
 const Login = () => {
-  const notifySuccess = () => toast.success("Login Successful");
-  const notifyWarning =()=> toast.error("Invalid credentials")
-  const [formData, setFormData] = useState({ email: '', password: '' });
-  const navigate = useNavigate();
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({ ...prevData, [name]: value }));
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const storedUser = JSON.parse(localStorage.getItem('user'));
-    if (storedUser && storedUser.email === formData.email && storedUser.password === formData.password) {
-      notifySuccess('Login Successful');
-      navigate("/doctors/all")
-    } else {
-      notifyWarning();
-    }
-  };
-
+  const [showPassword, setShowPassword] = useState(false);
+  const [selectedUser,setSelectedUser] = useState("Patient")
   return (
-    <div className=" login flex justify-center items-center h-1/2 bg-gray-100">
-    <div className="w-full max-w-md bg-white p-8 rounded-lg shadow-lg">
-      <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
-      <form onSubmit={handleSubmit}>
-        <div className="mb-4">
-          <input 
-            type="email" 
-            name="email" 
-            placeholder="Email" 
-            value={formData.email} 
-            onChange={handleChange} 
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary" 
-            required 
-          />
+    <div className="flex justify-center items-center h-screen">
+      <div className="bg-white rounded-md shadow-md  w-full max-w-lg p-4">
+        <h1 className="text-center text-3xl font-bold text-primary mb-2">
+          MedList Login {selectedUser}
+        </h1>
+        <p className="text-center text-gray-500 text-sm mb-6">
+          Select your role and enter credentials
+        </p>
+        <div className="grid grid-cols-3 gap-4 mb-4">
+
+      {/* Patient Button (Default Selected) */}
+      <button
+        onClick={() => setSelectedUser("Patient")}
+        className={`flex flex-col items-center text-center rounded-md p-4  transition-all 
+          ${
+            selectedUser === "Patient"
+              ? "bg-primary text-white"
+              : "bg-[#f0fff4] hover:bg-[#e6ffe1] hover:border-primary"
+          }`}
+      >
+        <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center">
+          <span className="text-4xl">🤒</span>
         </div>
-        <div className="mb-4">
-          <input 
-            type="password" 
-            name="password" 
-            placeholder="Password" 
-            value={formData.password} 
-            onChange={handleChange} 
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary" 
-            required 
-          />
+        <p className="text-sm font-bold my-2">Patient</p>
+        <p className="text-xs text-gray-500">Appointment & Pay</p>
+      </button>
+
+      {/* Doctor Button */}
+      <button
+        onClick={() => setSelectedUser("Doctor")}
+        className={`flex flex-col items-center text-center rounded-md p-4  transition-all 
+          ${
+            selectedUser === "Doctor"
+              ? "bg-primary text-white"
+              : "bg-[#f0fff4] hover:bg-[#e6ffe1] hover:border-primary"
+          }`}
+      >
+        <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center">
+          <span className="text-4xl">👨‍⚕️</span>
         </div>
-        <button 
-          type="submit" 
-          className="w-full bg-primary text-white py-2 rounded-lg hover:bg-green-600 transition duration-300"
-        >
-          Login
-        </button>
-        <p className='my-4'>Don't have an account? <Link to="/signup" className='text-primary'>Sign up here</Link></p>
-      </form>
-  </div>
-        
+        <p className="text-sm font-bold my-2">Doctor</p>
+        <p className="text-xs text-gray-500">Schedules & Appointments</p>
+          </button>
+            {/* Admin Button */}
+      <button
+        onClick={() => setSelectedUser("Admin")}
+        className={`flex flex-col items-center text-center rounded-md p-4 transition-all 
+          ${
+            selectedUser === "Admin"
+              ? "bg-primary text-white" 
+              : "bg-[#f0fff4] hover:bg-[#e8ffe1] hover:border-primary"
+          }`}
+      >
+        <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center">
+          <span className="text-4xl">🛡️</span>
+        </div>
+        <p className="text-sm font-bold my-2">Admin</p>
+        <p className="text-xs text-gray-500">Full system access</p>
+      </button>
+    </div>
+        <form className="space-y-4">
+          <div>
+            <label className="sr-only" htmlFor="username">
+              Email
+            </label>
+            <div className="relative">
+              <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">👤</span>
+              <input
+                type="text"
+                id="email"
+                className="w-full pl-10 p-3 border rounded-lg focus:outline-none focus:border-primary"
+                placeholder="email"
+              />
+            </div>
+          </div>
+          <div>
+            <label className="sr-only" htmlFor="password">
+              Password
+            </label>
+            <div className="relative">
+              <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">🔒</span>
+              <input
+                type={showPassword ? "text" : "password"}
+                id="password"
+                className="w-full pl-10 p-3 border rounded-lg focus:outline-none focus:border-primary"
+                placeholder="Password"
+              />
+              <span
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 cursor-pointer"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? "🙈" : "👁️"}
+              </span>
+            </div>
+          </div>
+          <button
+            type="submit"
+            className="w-full bg-primary text-white py-3 rounded-lg hover:bg-primary-dark focus:outline-none text-lg"
+          > Login
+          </button>
+        </form>
+        <p className="text-center text-sm mt-4">
+          <a href="#" className="text-primary hover:underline">
+            Forgot Password?
+          </a>
+        </p>
+      </div>
     </div>
   );
 };

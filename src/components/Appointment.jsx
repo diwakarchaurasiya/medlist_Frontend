@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import {  toast } from 'react-toastify';
 const Appointment = ({setShowAppointment}) => {
   // Define state for selected day and time
-  const notify = () => toast.success("Appointment Booked ");
+  const notify = () => toast.success("Appointment Booked");
   const [selectedDay, setSelectedDay] = useState(0);
   const [selectedTime, setSelectedTime] = useState("");
 
