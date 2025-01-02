@@ -8,7 +8,7 @@ export default {
     colors: {
       primary: '#66B406',
       black: '#262626',
-      white: '#fff', 
+      white: '#fff',
     },
     extend: {},
   },

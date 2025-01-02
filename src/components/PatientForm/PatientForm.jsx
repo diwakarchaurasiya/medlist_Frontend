@@ -1,17 +1,18 @@
 import React from "react";
 import { useForm } from "react-hook-form";
-
+import { toast } from "react-toastify";
+import { Link, useNavigate } from "react-router-dom";
 const PatientForm = () => {
+  toast
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
-
+  const navigate = useNavigate();
   // Function to handle patient registration
   async function registerPatient(patientData) {
     const url = "http://localhost:5000/api/patient/register";
-
     try {
       const response = await fetch(url, {
         method: "POST",
@@ -20,15 +21,16 @@ const PatientForm = () => {
         },
         body: JSON.stringify(patientData),
       });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
+      console.log(response);
       const responseData = await response.json();
-      console.log("Patient registered successfully:", responseData);
+      if (!response.ok) {
+        throw new Error(responseData.message || "Registration failed");
+      }
+      else{toast.success('Patient Registered successfully!');
+        navigate("/login");
+}
     } catch (error) {
-      console.error("Error registering patient:", error);
+      toast.error(error.message || 'An unexpected error occurred');
     }
   }
 
@@ -48,6 +50,8 @@ const PatientForm = () => {
       <h2 className="text-2xl text-center font-bold text-gray-800 mb-6">
         Patient Registration
       </h2>
+      <p className="my-4">Are You A Doctor ?<Link to='/doctor/register' className="mx-2  text-primary p-2  hover:text-[green] transition-colors">Register As Doctor</Link>
+      </p>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         {/* Name */}
         <div className={groupClass}>
@@ -215,23 +219,23 @@ const PatientForm = () => {
         {/* Emergency Contact */}
         <div className={groupClass}>
           <label htmlFor="emergencyContactNumber" className={labelClass}>
-            Contact Number
+          Emergency Contact Number
           </label>
           <input
             id="emergencyContactNumber"
             type="text"
             placeholder="9876543210"
             className={inputClass}
-            {...register("emergencyContact.contactNumber", {
+            {...register("emergencyContact", {
               pattern: {
                 value: /^\d{10}$/,
                 message: "Emergency contact must be a 10-digit number",
               },
             })}
           />
-          {errors.emergencyContact?.contactNumber && (
+          {errors.emergencyContact && (
             <p className={errorClass}>
-              {errors.emergencyContact.contactNumber.message}
+              {errors.emergencyContact.message}
             </p>
           )}
         </div>

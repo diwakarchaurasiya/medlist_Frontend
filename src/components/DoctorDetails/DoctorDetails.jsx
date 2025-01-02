@@ -42,7 +42,7 @@ const DoctorDetails = () => {
         <div className="md:w-2/3 md:ml-8 text-center md:text-left mt-4 md:mt-0">
             <h1 className="text-3xl font-bold flex items-center justify-center md:justify-start">{docInfo.name}<img src={assets.verified_icon} className="px-2 w-8"/></h1>
             <h2 className="text-lg text-blue-600 mt-2">{docInfo.specialization} - { docInfo.qualification}</h2>
-          {showAppointment ? <Appointment setShowAppointment={setShowAppointment} /> : <div className="right">
+          {showAppointment ? <Appointment setShowAppointment={setShowAppointment} workingHours={docInfo.workingHours}/> : <div className="right">
             <p className="mt-4 ">Working Hours: <span className='font-semibold text-[gray]'>{docInfo.workingHours?.start}-{docInfo.workingHours?.end}</span>
               
           </p>

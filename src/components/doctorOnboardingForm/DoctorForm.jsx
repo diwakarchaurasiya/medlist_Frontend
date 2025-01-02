@@ -1,6 +1,7 @@
 import React from "react";
 import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const DoctorForm = () => {
   const {
@@ -23,17 +24,16 @@ const DoctorForm = () => {
         },
         body: JSON.stringify(doctorData),
       });
-
+      const responseData = await response.json();
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        throw new Error( responseData.message || "Registration Failed");
       }
       else {
-        const responseData = await response.json();
-        console.log('Doctor registered successfully:', responseData)
-        navigate("/doctors/all")
+        toast.success('Doctor Registered successfully!');
+        navigate("/login");
       }
     } catch (error) {
-      console.error('Error registering doctor:', error);
+      toast.error(error.message || "An unexpected error occurred");
     }
   }
 
@@ -65,12 +65,14 @@ const DoctorForm = () => {
   return (
     <div className="max-w-3xl mx-auto p-6 bg-white rounded-xl shadow-lg">
       <h2 className="text-2xl text-center font-bold text-gray-800 mb-6">Doctor Registration</h2>
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      <p className="my-4">Are You A Patient ?<Link to='/patient/register' className="mx-2  text-primary  hover:text-[green] transition-colors">Register As Patient</Link>
+            </p>
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" encType="multipart/form-data">
         {/* Name */}
         <div className={groupClass}>
-          <label htmlFor="name" className={labelClass}>Name</label>
+          <label htmlFor="name" className={labelClass}>Name (with Dr)</label>
           <input
-            placeholder="e.g., Robert Singh"
+            placeholder="e.g: Dr Robert Singh"
             id="name"
             type="text"
             className={inputClass}
@@ -83,7 +85,7 @@ const DoctorForm = () => {
         <div className={groupClass}>
           <label htmlFor="specialization" className={labelClass}>Specialization</label>
           <select
-            className={inputClass}
+            className={`${inputClass} max-w-full`}
             {...register("specialization", { required: "Specialization is required" })}
           >
             <option value="" disabled>Select Specialization</option>
@@ -226,7 +228,7 @@ const DoctorForm = () => {
           <div className={groupClass}>
             <label htmlFor="licenseNumber" className={labelClass}>License Number</label>
             <input
-              placeholder="e.g., LIC12345"
+              placeholder="e.g., ABCD ID 12345"
               id="licenseNumber"
               type="text"
               className={inputClass}
@@ -256,10 +258,10 @@ const DoctorForm = () => {
             <div>
               <label htmlFor="workingHours.start" className={labelClass}>Start Time</label>
               <input
-                placeholder="e.g., 09:00"
                 id="workingHours.start"
                 type="time"
                 className={inputClass}
+                defaultValue="09:00"
                 {...register("workingHours.start", { required: "Start time is required" })}
               />
               {errors.workingHours?.start && <p className={errorClass}>{errors.workingHours.start.message}</p>}
@@ -271,6 +273,7 @@ const DoctorForm = () => {
                 id="workingHours.end"
                 type="time"
                 className={inputClass}
+              defaultValue="17:00"
                 {...register("workingHours.end", { required: "End time is required" })}
               />
               {errors.workingHours?.end && <p className={errorClass}>{errors.workingHours.end.message}</p>}

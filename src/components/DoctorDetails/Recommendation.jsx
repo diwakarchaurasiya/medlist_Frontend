@@ -12,7 +12,7 @@ const Recommendation = ({ speciality }) => {
         .catch((err) => console.log(err))
      if (speciality) {
        const recommendedDoctors = apiResponse.data.filter(doc => doc.specialization === speciality);
-       setOtherDocs(recommendedDoctors.slice(0, 4));
+       setOtherDocs(recommendedDoctors.slice(1, 4));
         }
     }
     useEffect(() => {

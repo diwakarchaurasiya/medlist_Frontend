@@ -1,30 +1,64 @@
 import React, { useState } from "react";
 import {  toast } from 'react-toastify';
-const Appointment = ({setShowAppointment}) => {
+const Appointment = ({setShowAppointment,workingHours}) => {
   // Define state for selected day and time
-  const notify = () => toast.success("Appointment Booked");
   const [selectedDay, setSelectedDay] = useState(0);
   const [selectedTime, setSelectedTime] = useState("");
 
   // Dummy data for days and time slots
-  const days = [
-    { day: "SAT", date: 28 },
-    { day: "SUN", date: 29 },
-    { day: "MON", date: 30 },
-    { day: "TUE", date: 1 },
-    { day: "WED", date: 2 },
-    { day: "THU", date: 3 },
-    { day: "FRI", date: 4 },
-  ];
+  // const days = [
+  //   { day: "SAT", date: 28 },
+  //   { day: "SUN", date: 29 },
+  //   { day: "MON", date: 30 },
+  //   { day: "TUE", date: 1 },
+  //   { day: "WED", date: 2 },
+  //   { day: "THU", date: 3 },
+  //   { day: "FRI", date: 4 },
+  // ];
+  const generateDays = () => {
+    const daysArray = [];
+    const today = new Date();
+    const dayNames = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
+  
+    // Start from tomorrow, not today
+    for (let i = 1; i <= 7; i++) {
+      const futureDate = new Date(today);
+      futureDate.setDate(today.getDate() + i);
+  
+      daysArray.push({
+        day: dayNames[futureDate.getDay()],
+        date: futureDate.getDate(),
+      });
+    }
+    return daysArray;
+  };
+  
+  
+  // Example usage
+  const days = generateDays();
 
-  const timeSlots = [
-    "05:30 pm",
-    "06:30 pm",
-    "07:00 pm",
-    "07:30 pm",
-    "08:00 pm",
-    "08:30 pm",
-  ];
+  const genrateTimeSlots = (start,end) => { 
+    const timeSlots = [];
+    const startTime = start;
+    const endTime = end-1; //because if doctor accepts appointment of 5 so he will be busy from 5 to 6 so we will not accept appointment at 6
+  
+    for (let i = startTime; i <= endTime; i++) {
+      timeSlots.push(`${i}-${i+1}`);
+    }
+    return timeSlots;
+  }
+  const startTime = Number(workingHours.start.split(":")[0]); 
+  const endTime = Number(workingHours.end.split(":")[0]); 
+
+  const timeSlots = (genrateTimeSlots(startTime || 10,endTime || 17));
+  // const timeSlots = [
+  //   "05:30 pm",
+  //   "06:30 pm",
+  //   "07:00 pm",
+  //   "07:30 pm",
+  //   "08:00 pm",
+  //   "08:30 pm",
+  // ];
 
   // Handle the day and time selection
   const handleDaySelect = (index) => {
@@ -36,7 +70,7 @@ const Appointment = ({setShowAppointment}) => {
     setSelectedTime(time);
     };
     const bookingHandle = () => {
-        notify();
+      toast.success("Appointment Booked");
         setShowAppointment(false);
     }
 

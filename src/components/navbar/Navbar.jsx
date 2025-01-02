@@ -3,7 +3,7 @@ import {assets} from './../../assets/assets_frontend/assets'
 import { Link } from 'react-router-dom'
 import './navbar.css'
 const Navbar = () => {
-  const [isLogin, setIsLogin] = useState(true);
+  const [isLogin, setIsLogin] = useState(false);
   const [showMenu, setshowMenu] = useState(false);
   return (
     <div id='navbar'>
@@ -53,8 +53,8 @@ const Navbar = () => {
               </div>
 
             :
-            <Link to='/signup'>
-            <button type="button" className="outline-0  bg-primary text-white font-lg  focus:ring-4 focus:ring-green-300 rounded-md  px-5 py-2.5 ">Register</button> </Link>
+            <Link to='/login'>
+            <button type="button" className="outline-0  bg-primary text-white font-lg  focus:ring-4 focus:ring-green-300 rounded-md  px-5 py-2.5 ">Login</button> </Link>
 
           }
           </div>
