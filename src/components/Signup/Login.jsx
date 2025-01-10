@@ -47,7 +47,6 @@ const Login = ({ isLogin, setIsLogin }) => {
         }),
       });
       const responseData = await response.json();
-      console.log(responseData);
       if (!response.ok) {
         throw new Error(responseData.message || "Something went wrong");
       }
@@ -194,7 +193,7 @@ const Login = ({ isLogin, setIsLogin }) => {
           ""
         ) : (
           <p className="text-center text-sm mt-4">
-            Don't Have Account?
+            Don't have Account?
             <Link
               to={`/${selectedUser}/register`}
               className="text-primary hover:underline"

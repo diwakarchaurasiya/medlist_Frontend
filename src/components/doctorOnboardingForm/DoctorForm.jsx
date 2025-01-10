@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -20,7 +20,7 @@ const DoctorForm = () => {
       const response = await fetch(url, {
         method: "POST",
         headers: {
-          "Content-Type": "multipart/form-data",
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(doctorData),
       });
@@ -35,9 +35,7 @@ const DoctorForm = () => {
       toast.error(error.message || "An unexpected error occurred");
     }
   }
-
   const onSubmit = (data) => {
-    console.log(data);
     registerDoctor(data);
   };
 
@@ -359,21 +357,6 @@ const DoctorForm = () => {
               )}
             </div>
           </div>
-        </div>
-
-        {/* Profile Image */}
-        <div className={groupClass}>
-          <label htmlFor="profileImage" className={labelClass}>
-            Profile Image
-          </label>
-          <input
-            placeholder="Upload your profile image"
-            id="profileImage"
-            type="file"
-            accept="image/*"
-            className="w-full px-3 py-2 border rounded-md focus:outline-primary"
-            {...register("profileImage")}
-          />
         </div>
 
         {/* Submit Button */}

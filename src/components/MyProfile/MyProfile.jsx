@@ -1,24 +1,57 @@
-import React, { useState } from 'react'
-import { assets } from '../../assets/assets_frontend/assets';
-import './myProfile.css'
-import { toast } from 'react-toastify';
-
+import React, { useEffect, useState } from "react";
+import { assets } from "../../assets/assets_frontend/assets";
+import "./myProfile.css";
+import { toast } from "react-toastify";
 
 const MyProfile = () => {
-    const notify = () => toast.success("Details updated Successfully");
-    let [isEditable, setIsEditable] = useState(false);
-    let [userData, setUserData] = useState({
-        name: "Richard Zoe",
-        image: assets.profile_pic,
-        gender: "Male",
-        dob: "2005-01-01",
-        email: "richardzoe56@gmail.com",
-        mo_no: 1234567890,
-        address: {
-            line1: '17th Cross, Richmond',
-            line2: 'Circle, Ring Road, London'
+  const notify = () => toast.success("Details updated Successfully");
+  let [isEditable, setIsEditable] = useState(false);
+  let [userData, setUserData] = useState({
+    name: "Richard Zoe",
+    image: assets.profile_pic,
+    gender: "Male",
+    dob: "2005-01-01",
+    email: "richardzoe56@gmail.com",
+    mo_no: 1234567890,
+    address: {
+      line1: "17th Cross, Richmond",
+      line2: "Circle, Ring Road, London",
+    },
+  });
+
+  const fetchProfile = async () => {
+    const user = localStorage.getItem("user");
+    let role = user.role;
+    let id = user.id;
+    if (!role || !id) {
+      toast.error("Role or ID is missing in localStorage.");
+      return;
+    }
+
+    try {
+      const response = await fetch(`http://localhost:5000/api/${role}/${id}`);
+      if (!response.ok) {
+        if (response.status === 404) {
+          throw new Error("Profile not found.");
+        } else if (response.status === 500) {
+          throw new Error("Server error. Please try again later.");
+        } else {
+          throw new Error("An unexpected error occurred.");
         }
-    });
+      }
+      const data = await response.json();
+      setUserData(data); // Update userData with fetched data
+      toast.success("Profile loaded successfully!");
+    } catch (error) {
+      console.error("Error fetching profile:", error);
+      toast.error(error.message);
+    }
+  };
+
+  useEffect(() => {
+    fetchProfile();
+  }, []);
+
   return (
     <div className=" profile flex justify-center items-center my-8">
       <div className="bg-white rounded-lg p-6 w-96">
@@ -33,31 +66,57 @@ const MyProfile = () => {
 
         {/* UserData Info */}
         <div className="mt-4 text-center md:text-left text-md">
-                  {isEditable ?
-                      <input className="text-2xl font-semibold " type="text" id="" onChange={e=>setUserData(prev=>({...prev,name:e.target.value}))} value={userData.name}  autoFocus/>
-                  : <h2 className="text-2xl font-semibold ">{userData.name}</h2>
-                    }
-                  
+          {isEditable ? (
+            <input
+              className="text-2xl font-semibold "
+              type="text"
+              id=""
+              onChange={(e) =>
+                setUserData((prev) => ({ ...prev, name: e.target.value }))
+              }
+              value={userData.name}
+              autoFocus
+            />
+          ) : (
+            <h2 className="text-2xl font-semibold ">{userData.name}</h2>
+          )}
 
           <div className="mt-4">
-                      <h3 className="text-sm text-[gray]">Contact Information</h3>
-                      <p className="mt-2">
-                      <strong>Email: </strong>
-                      {isEditable ?
-                          <input type="text" id="" onChange={e => setUserData(prev => ({ ...prev, email: e.target.value }))}  value={userData.email}/>
-                          : 
-                              <a href={`mailto:${userData.email}`} className="text-primary hover:underline">
-                                  {userData.email}
-                              </a>
-                          }
-                          </p>
+            <h3 className="text-sm text-[gray]">Contact Information</h3>
+            <p className="mt-2">
+              <strong>Email: </strong>
+              {isEditable ? (
+                <input
+                  type="text"
+                  id=""
+                  onChange={(e) =>
+                    setUserData((prev) => ({ ...prev, email: e.target.value }))
+                  }
+                  value={userData.email}
+                />
+              ) : (
+                <a
+                  href={`mailto:${userData.email}`}
+                  className="text-primary hover:underline"
+                >
+                  {userData.email}
+                </a>
+              )}
+            </p>
             <p>
-                <strong>Phone:</strong>{isEditable ?
-                              <input type="text" id="" onChange={e => setUserData(prev => ({ ...prev, mo_no: e.target.value }))} value={userData.mo_no} />
-                              :
-                              <span>{ userData.mo_no }</span>
-                              
-                          }
+              <strong>Phone:</strong>
+              {isEditable ? (
+                <input
+                  type="text"
+                  id=""
+                  onChange={(e) =>
+                    setUserData((prev) => ({ ...prev, mo_no: e.target.value }))
+                  }
+                  value={userData.mo_no}
+                />
+              ) : (
+                <span>{userData.mo_no}</span>
+              )}
             </p>
             <p>
               <strong>Address: </strong>
@@ -68,38 +127,63 @@ const MyProfile = () => {
           <div className="mt-4">
             <h3 className="text-sm  text-[gray]">Basic Information</h3>
             <p>
-                          <strong>Gender: </strong>
-                          {isEditable ?
-                              <input type="text" id="" onChange={e => setUserData(prev => ({ ...prev, gender: e.target.value }))} value={userData.gender} />
-                              : <p>{userData.gender}</p>}
+              <strong>Gender: </strong>
+              {isEditable ? (
+                <input
+                  type="text"
+                  id=""
+                  onChange={(e) =>
+                    setUserData((prev) => ({ ...prev, gender: e.target.value }))
+                  }
+                  value={userData.gender}
+                />
+              ) : (
+                <p>{userData.gender}</p>
+              )}
             </p>
             <p>
-                          <strong>Birthday: </strong> {isEditable ?
-                              <input type="date" id="" onChange={e => setUserData(prev => ({ ...prev, dob: e.target.value }))} placeholder='2000-01-01' value={userData.dob} />
-                              : <p>{userData.dob}
-                              </p>}
+              <strong>Birthday: </strong>{" "}
+              {isEditable ? (
+                <input
+                  type="date"
+                  id=""
+                  onChange={(e) =>
+                    setUserData((prev) => ({ ...prev, dob: e.target.value }))
+                  }
+                  placeholder="2000-01-01"
+                  value={userData.dob}
+                />
+              ) : (
+                <p>{userData.dob}</p>
+              )}
             </p>
           </div>
         </div>
 
         {/* Edit Button */}
         <div className="mt-6 flex justify-center md:justify-start">
-                  {isEditable ? <button className="px-4 py-2 bg-green-500 text-white rounded-md bg-primary" onClick={() => {
-                      setIsEditable(!isEditable)
-                      notify()
-                  }
-                
-                  }>
-                      Save
-                  </button> : <button className="px-4 py-2 bg-green-500 text-white rounded-md bg-primary" onClick={() => setIsEditable(!isEditable)
-                
-            }>
-                Edit
-            </button> }
+          {isEditable ? (
+            <button
+              className="px-4 py-2 bg-green-500 text-white rounded-md bg-primary"
+              onClick={() => {
+                setIsEditable(!isEditable);
+                notify();
+              }}
+            >
+              Save
+            </button>
+          ) : (
+            <button
+              className="px-4 py-2 bg-green-500 text-white rounded-md bg-primary"
+              onClick={() => setIsEditable(!isEditable)}
+            >
+              Edit
+            </button>
+          )}
         </div>
-          </div>
+      </div>
     </div>
-  )
-}
+  );
+};
 
-export default MyProfile
+export default MyProfile;

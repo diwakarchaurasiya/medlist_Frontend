@@ -31,8 +31,9 @@ function App() {
           <Route path="my-profile" element={<MyProfile />} />
           <Route path="my-appointments" element={<Myappoitment />} />
           <Route path="doctors/:speciality" element={<DoctorsListing />} />
-          // creation of doctor and patient
+          // creation of doctor and updation of doctor
           <Route path="doctor/register" element={<DoctorForm />} />
+          // creation of patient and updation of patient
           <Route path="patient/register" element={<PatientForm />} />
           <Route
             path="login"
