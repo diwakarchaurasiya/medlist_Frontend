@@ -3,6 +3,8 @@ import { doctors } from "../../assets/assets_frontend/assets";
 import { specialityData } from "../../assets/assets_frontend/assets";
 import DocsCard from "../docsCard/docsCard";
 import { Link, Navigate, useParams } from "react-router-dom";
+import fetchFromApi from "../../utility/fetchFromApi";
+import { FaUserDoctor } from "react-icons/fa6";
 
 const DoctorsListing = () => {
   // useEffect(() => {
@@ -15,25 +17,27 @@ const DoctorsListing = () => {
   //   checkLogin();
   // }, []);
   let { speciality } = useParams();
-  let [specialists, setSpecialists] = useState([]);
+  const [specialists, setSpecialists] = useState([]); // Filtered specialists
+  const [allSpecialists, setAllSpecialists] = useState([]);
   let [showFilter, setShowFilter] = useState(false);
-  const applyFilter = async () => {
-    let apiResponse = await fetch("http://localhost:5000/api/doctor")
-      .then((res) => res.json())
-      .catch((err) => console.log(err));
-    if (speciality) {
-      if (speciality === "all") {
-        setSpecialists(apiResponse.data);
-      } else {
-        setSpecialists(
-          apiResponse.data.filter((doc) => doc.specialization === speciality)
-        );
-      }
-    }
-  };
   useEffect(() => {
-    applyFilter();
-  }, [speciality]);
+    fetchFromApi("http://localhost:5000/api/doctor", "GET")
+      .then((data) => {
+        setAllSpecialists(data.data);
+      })
+      .catch((error) => console.error("Failed to fetch doctors:", err));
+  }, []);
+
+  // Filter locally whenever "speciality" changes
+  useEffect(() => {
+    if (speciality === "all") {
+      setSpecialists(allSpecialists); // Reset to all specialists
+    } else {
+      setSpecialists(
+        allSpecialists.filter((doc) => doc.specialization === speciality)
+      );
+    }
+  }, [speciality, allSpecialists]);
   return (
     <>
       <button
@@ -69,6 +73,7 @@ const DoctorsListing = () => {
                   }`}
                   type="button"
                 >
+                  <FaUserDoctor className="inline-block mr-2" />
                   {specs.speciality}
                 </button>
               </Link>

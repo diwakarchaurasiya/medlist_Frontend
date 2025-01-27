@@ -37,6 +37,8 @@ import Gynecologist from './Gynecologist.svg'
 import Neurologist from './Neurologist.svg'
 import Pediatricians from './Pediatricians.svg'
 import sad404 from './sad404.svg'
+import herotext from './herotext.png'
+
 
 
 export const assets = {
@@ -57,7 +59,8 @@ export const assets = {
     dropdown_icon,
     upload_icon,
     stripe_logo,
-    razorpay_logo
+    razorpay_logo,
+    herotext,
 }
 
 export const specialityData = [
@@ -297,7 +300,7 @@ export const doctors = [
             line1: '37th Cross, Richmond',
             line2: 'Circle, Ring Road, London'
         }
-        
+
     },
     {
         _id: 'doc16',

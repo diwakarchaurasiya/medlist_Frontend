@@ -15,6 +15,7 @@ import Myappoitment from "./components/MyAppointments/Myappoitment";
 import DoctorForm from "./components/doctorOnboardingForm/DoctorForm";
 import PatientForm from "./components/PatientForm/PatientForm";
 import { useState } from "react";
+import ImageUpload from "./components/ImageUpload";
 
 function App() {
   const [isLogin, setIsLogin] = useState(false);
@@ -33,6 +34,7 @@ function App() {
           <Route path="doctors/:speciality" element={<DoctorsListing />} />
           // creation of doctor and updation of doctor
           <Route path="doctor/register" element={<DoctorForm />} />
+          <Route path="doctor/upload" element={<ImageUpload />} />
           // creation of patient and updation of patient
           <Route path="patient/register" element={<PatientForm />} />
           <Route

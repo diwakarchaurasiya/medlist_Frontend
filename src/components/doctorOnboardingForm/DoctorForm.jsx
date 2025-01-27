@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
+import { FaUserLock } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
@@ -364,7 +365,7 @@ const DoctorForm = () => {
           type="submit"
           className="w-full bg-primary text-white py-2 px-4 rounded-md hover:bg-[green] focus:outline-primary transition-colors"
         >
-          Register Doctor
+          Register Doctor <FaUserLock className="inline-block ml-2" />
         </button>
       </form>
     </div>

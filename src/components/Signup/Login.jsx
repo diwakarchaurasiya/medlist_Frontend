@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
+import { FaUserLock, FaUserShield } from "react-icons/fa";
 
 const inputClass =
   "w-full pl-10 py-3 border rounded-lg focus:outline-none focus:border-primary";
@@ -119,7 +120,9 @@ const Login = ({ isLogin, setIsLogin }) => {
           }`}
           >
             <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center">
-              <span className="text-4xl">🛡️</span>
+              <span className="text-4xl">
+                <FaUserShield />
+              </span>
             </div>
             <p className="text-sm font-bold my-2">Admin</p>
             <p className="text-xs text-gray-500">Full system access</p>
@@ -186,7 +189,7 @@ const Login = ({ isLogin, setIsLogin }) => {
 
           {/* Submit Button */}
           <button type="submit" className={`${buttonClass} bg-primary`}>
-            Login
+            <FaUserLock className="inline-block mr-2" /> Login
           </button>
         </form>
         {selectedUser === "Admin" ? (

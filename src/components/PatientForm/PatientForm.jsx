@@ -2,8 +2,9 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
+import { FaUserLock } from "react-icons/fa";
 const PatientForm = () => {
-  toast
+  toast;
   const {
     register,
     handleSubmit,
@@ -25,12 +26,12 @@ const PatientForm = () => {
       const responseData = await response.json();
       if (!response.ok) {
         throw new Error(responseData.message || "Registration failed");
-      }
-      else{toast.success('Patient Registered successfully!');
+      } else {
+        toast.success("Patient Registered successfully!");
         navigate("/login");
-}
+      }
     } catch (error) {
-      toast.error(error.message || 'An unexpected error occurred');
+      toast.error(error.message || "An unexpected error occurred");
     }
   }
 
@@ -50,7 +51,14 @@ const PatientForm = () => {
       <h2 className="text-2xl text-center font-bold text-gray-800 mb-6">
         Patient Registration
       </h2>
-      <p className="my-4">Are You A Doctor ?<Link to='/doctor/register' className="mx-2  text-primary p-2  hover:text-[green] transition-colors">Register As Doctor</Link>
+      <p className="my-4">
+        Are You A Doctor ?
+        <Link
+          to="/doctor/register"
+          className="mx-2  text-primary p-2  hover:text-[green] transition-colors"
+        >
+          Register As Doctor
+        </Link>
       </p>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         {/* Name */}
@@ -115,7 +123,9 @@ const PatientForm = () => {
             id="dateOfBirth"
             type="date"
             className={inputClass}
-            {...register("dateOfBirth", { required: "Date of Birth is required" })}
+            {...register("dateOfBirth", {
+              required: "Date of Birth is required",
+            })}
           />
           {errors.dateOfBirth && (
             <p className={errorClass}>{errors.dateOfBirth.message}</p>
@@ -219,7 +229,7 @@ const PatientForm = () => {
         {/* Emergency Contact */}
         <div className={groupClass}>
           <label htmlFor="emergencyContactNumber" className={labelClass}>
-          Emergency Contact Number
+            Emergency Contact Number
           </label>
           <input
             id="emergencyContactNumber"
@@ -234,9 +244,7 @@ const PatientForm = () => {
             })}
           />
           {errors.emergencyContact && (
-            <p className={errorClass}>
-              {errors.emergencyContact.message}
-            </p>
+            <p className={errorClass}>{errors.emergencyContact.message}</p>
           )}
         </div>
 
@@ -245,7 +253,7 @@ const PatientForm = () => {
           type="submit"
           className="w-full bg-primary text-white py-2 px-4 rounded-md hover:bg-[green] focus:outline-primary transition-colors"
         >
-          Register Patient
+          Register Patient <FaUserLock className="inline-block ml-2" />
         </button>
       </form>
     </div>

@@ -1,184 +1,157 @@
-import React, { useEffect, useState } from "react";
-import { assets } from "../../assets/assets_frontend/assets";
-import "./myProfile.css";
-import { toast } from "react-toastify";
+import React, { useState } from "react";
+import fetchFromApi from "../../utility/fetchFromApi";
 
-const MyProfile = () => {
-  const notify = () => toast.success("Details updated Successfully");
-  let [isEditable, setIsEditable] = useState(false);
-  let [userData, setUserData] = useState({
-    name: "Richard Zoe",
-    image: assets.profile_pic,
-    gender: "Male",
-    dob: "2005-01-01",
-    email: "richardzoe56@gmail.com",
-    mo_no: 1234567890,
-    address: {
-      line1: "17th Cross, Richmond",
-      line2: "Circle, Ring Road, London",
-    },
-  });
+// // User data from database
+// fetchFromApi(
+//   "http://localhost:5000/api/patient/6773ecdd87ef67ddf16b342f",
+//   "GET"
+// )
+//   .then((data) => setData(data))
+//   .catch((error) => console.error(error));
+// const userData = {
+//   name: "Babar Ajam",
+//   age: 20,
+//   role: "patient",
+//   gender: "Male",
+//   dateOfBirth: "2000-01-10T00:00:00.000+00:00",
+//   contactNumber: "3829749823",
+//   email: "babarajam123@gmail.com",
+//   address: "Atari",
+//   medicalHistory: "none",
+//   profileImage: "https://cdn-icons-png.flaticon.com/512/3135/3135715.png",
+//   emergencyContact: "1234567890",
+// };
 
-  const fetchProfile = async () => {
-    const user = localStorage.getItem("user");
-    let role = user.role;
-    let id = user.id;
-    if (!role || !id) {
-      toast.error("Role or ID is missing in localStorage.");
-      return;
-    }
+const Profile = () => {
+  const [data, setData] = useState([]);
+  const [editSection, setEditSection] = useState(null);
+  const [formValues, setFormValues] = useState({});
 
-    try {
-      const response = await fetch(`http://localhost:5000/api/${role}/${id}`);
-      if (!response.ok) {
-        if (response.status === 404) {
-          throw new Error("Profile not found.");
-        } else if (response.status === 500) {
-          throw new Error("Server error. Please try again later.");
-        } else {
-          throw new Error("An unexpected error occurred.");
-        }
-      }
-      const data = await response.json();
-      setUserData(data); // Update userData with fetched data
-      toast.success("Profile loaded successfully!");
-    } catch (error) {
-      console.error("Error fetching profile:", error);
-      toast.error(error.message);
-    }
+  const handleEdit = (section) => {
+    setEditSection(section);
+    setFormValues(data);
   };
 
-  useEffect(() => {
-    fetchProfile();
-  }, []);
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormValues((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSave = () => {
+    setData(formValues);
+    setEditSection(null);
+  };
+
+  // Helper function to format date
+  const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  };
+  // User data from database
+  fetchFromApi(
+    "http://localhost:5000/api/patient/6773ecdd87ef67ddf16b342f",
+    "GET"
+  )
+    .then((data) => setData(data.data))
+    .catch((error) => console.error(error));
 
   return (
-    <div className=" profile flex justify-center items-center my-8">
-      <div className="bg-white rounded-lg p-6 w-96">
-        {/* Profile Image */}
-        <div className="flex justify-center md:justify-start">
+    <div className="min-h-screen text-black">
+      <div className="max-w-screen-xl mx-auto px-6 py-8">
+        {/* Profile Header */}
+        <div className="bg-white shadow-md rounded-lg p-6 flex items-center">
           <img
-            src={userData.image} // Link to profile image
-            alt={userData.name}
-            className="w-24 h-24 rounded-md border-2 border-primary"
+            src={data.profileImage}
+            alt="Profile"
+            className="w-20 h-20 rounded-full object-cover"
           />
-        </div>
-
-        {/* UserData Info */}
-        <div className="mt-4 text-center md:text-left text-md">
-          {isEditable ? (
-            <input
-              className="text-2xl font-semibold "
-              type="text"
-              id=""
-              onChange={(e) =>
-                setUserData((prev) => ({ ...prev, name: e.target.value }))
-              }
-              value={userData.name}
-              autoFocus
-            />
-          ) : (
-            <h2 className="text-2xl font-semibold ">{userData.name}</h2>
-          )}
-
-          <div className="mt-4">
-            <h3 className="text-sm text-[gray]">Contact Information</h3>
-            <p className="mt-2">
-              <strong>Email: </strong>
-              {isEditable ? (
-                <input
-                  type="text"
-                  id=""
-                  onChange={(e) =>
-                    setUserData((prev) => ({ ...prev, email: e.target.value }))
-                  }
-                  value={userData.email}
-                />
-              ) : (
-                <a
-                  href={`mailto:${userData.email}`}
-                  className="text-primary hover:underline"
-                >
-                  {userData.email}
-                </a>
-              )}
-            </p>
-            <p>
-              <strong>Phone:</strong>
-              {isEditable ? (
-                <input
-                  type="text"
-                  id=""
-                  onChange={(e) =>
-                    setUserData((prev) => ({ ...prev, mo_no: e.target.value }))
-                  }
-                  value={userData.mo_no}
-                />
-              ) : (
-                <span>{userData.mo_no}</span>
-              )}
-            </p>
-            <p>
-              <strong>Address: </strong>
-              {userData.address.line1}, {userData.address.line2}
-            </p>
-          </div>
-
-          <div className="mt-4">
-            <h3 className="text-sm  text-[gray]">Basic Information</h3>
-            <p>
-              <strong>Gender: </strong>
-              {isEditable ? (
-                <input
-                  type="text"
-                  id=""
-                  onChange={(e) =>
-                    setUserData((prev) => ({ ...prev, gender: e.target.value }))
-                  }
-                  value={userData.gender}
-                />
-              ) : (
-                <p>{userData.gender}</p>
-              )}
-            </p>
-            <p>
-              <strong>Birthday: </strong>{" "}
-              {isEditable ? (
-                <input
-                  type="date"
-                  id=""
-                  onChange={(e) =>
-                    setUserData((prev) => ({ ...prev, dob: e.target.value }))
-                  }
-                  placeholder="2000-01-01"
-                  value={userData.dob}
-                />
-              ) : (
-                <p>{userData.dob}</p>
-              )}
-            </p>
+          <div className="ml-6">
+            <h1 className="text-2xl font-bold text-primary">{data.name}</h1>
+            <p className="text-sm">{data.role}</p>
+            <p className="text-sm">{data.address}</p>
           </div>
         </div>
 
-        {/* Edit Button */}
-        <div className="mt-6 flex justify-center md:justify-start">
-          {isEditable ? (
+        {/* Detailed Information Section */}
+        <div className="bg-white shadow-md rounded-lg p-6 mt-6">
+          <div className="flex justify-between items-center">
+            <h2 className="text-lg font-semibold text-primary">
+              Personal Information
+            </h2>
             <button
-              className="px-4 py-2 bg-green-500 text-white rounded-md bg-primary"
-              onClick={() => {
-                setIsEditable(!isEditable);
-                notify();
-              }}
-            >
-              Save
-            </button>
-          ) : (
-            <button
-              className="px-4 py-2 bg-green-500 text-white rounded-md bg-primary"
-              onClick={() => setIsEditable(!isEditable)}
+              className="text-primary hover:bg-secondary transition-colors hover:text-white px-4 py-1 rounded"
+              onClick={() => handleEdit("personalInfo")}
             >
               Edit
             </button>
+          </div>
+          {editSection === "personalInfo" ? (
+            <div className="mt-4">
+              <div className="grid grid-cols-2 gap-4">
+                {Object.entries(data).map(([key, value]) => {
+                  // Exclude sensitive or non-editable fields
+                  if (
+                    [
+                      "profileImage",
+                      "password",
+                      "_id",
+                      "__v",
+                      "createdAt",
+                    ].includes(key)
+                  )
+                    return null;
+                  return (
+                    <div key={key}>
+                      <label className="block text-sm font-semibold text-gray-600 capitalize">
+                        {key.replace(/([A-Z])/g, " $1")}
+                      </label>
+                      <input
+                        type={key === "dateOfBirth" ? "date" : "text"}
+                        name={key}
+                        value={formValues[key] || ""}
+                        onChange={handleChange}
+                        className="w-full p-2 rounded shadow-sm border-gray-300"
+                      />
+                    </div>
+                  );
+                })}
+              </div>
+              <div className="mt-4 flex justify-end space-x-2">
+                <button
+                  className="bg-gray-200 px-4 py-2 rounded hover:bg-gray-300"
+                  onClick={() => setEditSection(null)}
+                >
+                  Cancel
+                </button>
+                <button
+                  className="bg-primary text-white px-4 py-2 rounded hover:bg-secondary transition-colors"
+                  onClick={handleSave}
+                >
+                  Save
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 gap-4 mt-4">
+              {Object.entries(data).map(([key, value]) => {
+                // Exclude sensitive or unnecessary fields
+                if (["profileImage", "password", "_id", "__v"].includes(key))
+                  return null;
+                return (
+                  <div key={key}>
+                    <p className="text-sm capitalize">
+                      {key.replace(/([A-Z])/g, " $1")}
+                    </p>
+                    <p className="font-medium text-black">
+                      {key === "dateOfBirth" ? formatDate(value) : value}
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
           )}
         </div>
       </div>
@@ -186,4 +159,4 @@ const MyProfile = () => {
   );
 };
 
-export default MyProfile;
+export default Profile;

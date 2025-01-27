@@ -4,6 +4,7 @@ import { assets } from "./../../assets/assets_frontend/assets";
 import Appointment from "../Appointment/Appointment";
 import DocsCard from "../docsCard/docsCard";
 import Recommendation from "./Recommendation";
+import { FaCalendarPlus, FaRupeeSign, FaUserClock } from "react-icons/fa";
 
 const DoctorDetails = () => {
   const { docName } = useParams();
@@ -98,7 +99,8 @@ const DoctorDetails = () => {
                   className="outline-0  bg-primary focus:ring-4 focus:ring-green-300 font-medium rounded-md  px-5 py-2.5 text-white"
                   onClick={() => setShowAppointment(!showAppointment)}
                 >
-                  Book an appointment
+                  Book an appointment{" "}
+                  <FaCalendarPlus className="ml-2 inline-block" />
                 </button>
               </div>
             </div>
@@ -113,7 +115,10 @@ const DoctorDetails = () => {
           {/* Specialties Cards */}
           <div className="p-6 border rounded-lg shadow-lg text-center">
             <h4 className="text-xl font-semibold">{docInfo.experience}</h4>
-            <p className="mt-2">Experience</p>
+            <p className="mt-2">
+              <FaUserClock className="inline-block mr-2" />
+              Experience
+            </p>
           </div>
           <div className="p-6 border rounded-lg shadow-lg text-center">
             <h4 className="text-xl font-semibold">{docInfo.qualification}</h4>
@@ -121,7 +126,8 @@ const DoctorDetails = () => {
           </div>
           <div className="p-6 border rounded-lg shadow-lg text-center">
             <h4 className="text-xl font-semibold">
-              ₹{docInfo.appointmentFees}
+              <FaRupeeSign className="inline-block mr-2" />
+              {docInfo.appointmentFees}
             </h4>
             <p className="mt-2">Appointment Fees</p>
           </div>
