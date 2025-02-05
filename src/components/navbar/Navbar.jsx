@@ -30,7 +30,7 @@ const Navbar = ({ isLogin, setIsLogin }) => {
           </Link>
         </div>
         <div className="links">
-          <ul className="list-none hidden md:flex items-start gap-5 font-medium">
+          <ul className="list-none hidden md:flex items-center gap-5 font-medium">
             <li>
               <Link to="/">Home</Link>
             </li>
@@ -42,6 +42,9 @@ const Navbar = ({ isLogin, setIsLogin }) => {
             </li>
             <li>
               <Link to="/contact">contact</Link>
+            </li>
+            <li className="bg-secondary text-white px-4 py-1 rounded-md">
+              <Link to="/admin">admin</Link>
             </li>
           </ul>
         </div>
@@ -156,6 +159,9 @@ const Navbar = ({ isLogin, setIsLogin }) => {
               <Link to="/contact" onClick={() => setshowMenu(false)}>
                 contact
               </Link>
+            </li>
+            <li className="bg-secondary text-white px-4 py-1 rounded-md">
+              <Link to="/admin">admin</Link>
             </li>
           </ul>
         </div>

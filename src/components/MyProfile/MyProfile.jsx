@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import fetchFromApi from "../../utility/fetchFromApi";
 
 // // User data from database
@@ -51,12 +51,14 @@ const Profile = () => {
     });
   };
   // User data from database
-  fetchFromApi(
-    "http://localhost:5000/api/patient/6773ecdd87ef67ddf16b342f",
-    "GET"
-  )
-    .then((data) => setData(data.data))
-    .catch((error) => console.error(error));
+  useEffect(() => {
+    fetchFromApi(
+      "http://localhost:5000/api/patient/6773ecdd87ef67ddf16b342f",
+      "GET"
+    )
+      .then((data) => setData(data.data))
+      .catch((error) => console.error(error));
+  }, []);
 
   return (
     <div className="min-h-screen text-black">

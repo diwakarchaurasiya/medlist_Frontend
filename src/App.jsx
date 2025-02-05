@@ -13,9 +13,12 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Myappoitment from "./components/MyAppointments/Myappoitment";
 import DoctorForm from "./components/doctorOnboardingForm/DoctorForm";
-import PatientForm from "./components/PatientForm/PatientForm";
+import PatientForm from "./components/Patient/PatientForm";
 import { useState } from "react";
 import ImageUpload from "./components/ImageUpload";
+import AdminDashboard from "./components/admin/AdminDashboard";
+import Patients from "./components/admin/Patients";
+import Doctors from "./components/admin/Doctors";
 
 function App() {
   const [isLogin, setIsLogin] = useState(false);
@@ -37,6 +40,10 @@ function App() {
           <Route path="doctor/upload" element={<ImageUpload />} />
           // creation of patient and updation of patient
           <Route path="patient/register" element={<PatientForm />} />
+          //admin routes for dashboard and patient listing
+          <Route path="admin" element={<AdminDashboard />} />
+          <Route path="/admin/patients" element={<Patients />} />
+          <Route path="/admin/doctors" element={<Doctors />} />
           <Route
             path="login"
             element={<Login isLogin={isLogin} setIsLogin={setIsLogin} />}

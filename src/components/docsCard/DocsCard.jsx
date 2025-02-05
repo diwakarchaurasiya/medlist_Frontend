@@ -16,7 +16,9 @@ const DocsCard = ({ doc }) => {
           alt=""
         />
         <span className="pl-2 text-center">
-          <h2 className="text-[#262626] text-md font-bold ">{doc.name}</h2>
+          <h2 className="text-[#262626] text-md font-bold capitalize ">
+            {doc.name}
+          </h2>
           <p className="text-[#5C5C5C] text-sm">{doc.specialization}</p>
         </span>
         <p className="py-2">
