@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { assets } from "./../../assets/assets_frontend/assets";
 import Appointment from "../Appointment/Appointment";
-import DocsCard from "../docsCard/docsCard";
+import DocsCard from "../docsCard/DocsCard";
 import Recommendation from "./Recommendation";
 import { FaCalendarPlus, FaRupeeSign, FaUserClock } from "react-icons/fa";
 

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { doctors } from "../../assets/assets_frontend/assets";
 import { Link } from "react-router-dom";
-import DocsCard from "../docsCard/docsCard";
+import DocsCard from "../docsCard/DocsCard";
 
 const TopDocs = () => {
   const [topDoctors, setTopDoctors] = useState([]);
