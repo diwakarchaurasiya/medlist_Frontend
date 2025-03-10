@@ -5,13 +5,13 @@ import { FaArrowRight } from "react-icons/fa";
 const DocsCard = ({ doc }) => {
   return (
     <div
-      className="doc-card border border-[#C9D8FF] rounded-xl overflow-hidden cursor-pointer hover:translate-y-[-10px] transition-all duration-500 md:w-1/6  "
+      className="doc-card border border-[#C9D8FF] rounded-lg overflow-hidden cursor-pointer hover:translate-y-[-10px] transition-all duration-500 md:w-1/6 w-full "
       key={doc._id}
       onClick={() => scrollTo(0, 0)}
     >
       <Link to={"/doctor/" + doc._id}>
         <img
-          className="bg-primary hover:bg-secondary h-56 w-full object-cover"
+          className="bg-primary hover:bg-secondary transition-all duration-400 h-auto md:h-56 w-full object-cover"
           src={doc.profileImage}
           alt=""
         />
@@ -23,7 +23,8 @@ const DocsCard = ({ doc }) => {
         </span>
         <p className="py-2">
           <span className="text-sm text-[gray]">Fees-</span>₹
-          {doc.appointmentFees}
+          {doc.appointmentFees}, {doc.experience}{" "}
+          <span className="text-sm text-[gray]">years</span>
         </p>
         <div className="button m-2">
           <button className="w-full bg-primary text-white py-2 rounded-md hover:bg-green-600 transition duration-300">

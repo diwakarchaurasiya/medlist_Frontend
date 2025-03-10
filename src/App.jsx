@@ -17,8 +17,6 @@ import PatientForm from "./components/Patient/PatientForm";
 import { useState } from "react";
 import ImageUpload from "./components/ImageUpload";
 import AdminDashboard from "./components/admin/AdminDashboard";
-import Patients from "./components/admin/Patients";
-import Doctors from "./components/admin/Doctors";
 
 function App() {
   const [isLogin, setIsLogin] = useState(false);
@@ -41,9 +39,7 @@ function App() {
           // creation of patient and updation of patient
           <Route path="patient/register" element={<PatientForm />} />
           //admin routes for dashboard and patient listing
-          <Route path="admin" element={<AdminDashboard />} />
-          <Route path="/admin/patients" element={<Patients />} />
-          <Route path="/admin/doctors" element={<Doctors />} />
+          <Route path="admin/*" element={<AdminDashboard />} />
           <Route
             path="login"
             element={<Login isLogin={isLogin} setIsLogin={setIsLogin} />}

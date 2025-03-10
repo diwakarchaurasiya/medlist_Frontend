@@ -9,7 +9,6 @@ const ImageUpload = () => {
     const file = e.target.files[0];
     if (file) {
       setSelectedImage(file);
-      console.log(selectedImage);
       setPreviewImage(URL.createObjectURL(file));
     }
   };

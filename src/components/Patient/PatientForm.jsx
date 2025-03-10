@@ -22,7 +22,6 @@ const PatientForm = () => {
         },
         body: JSON.stringify(patientData),
       });
-      console.log(response);
       const responseData = await response.json();
       if (!response.ok) {
         throw new Error(responseData.message || "Registration failed");
@@ -36,7 +35,6 @@ const PatientForm = () => {
   }
 
   const onSubmit = (data) => {
-    console.log(data);
     registerPatient(data);
   };
 

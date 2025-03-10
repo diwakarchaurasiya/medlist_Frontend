@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import fetchFromApi from "../../utility/fetchFromApi";
 import { toast } from "react-toastify";
+import { FaStethoscope, FaTrashAlt } from "react-icons/fa";
 
 const Patients = () => {
   const [patients, setPatients] = useState([]);
@@ -33,58 +34,64 @@ const Patients = () => {
 
   return (
     <div className="py-8">
+      <h2 className="  ml-4 text-xl font-semibold text-secondary mb-4 flex items-center">
+        <FaStethoscope className="mr-2" /> All Patients
+      </h2>
       <table className="min-w-full bg-white  rounded-md">
         <thead className="bg-[#d2d2d2] ">
           <tr>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th className="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider">
               Name
             </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th className="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider">
               Age
             </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th className="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider">
               Gender
             </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th className="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider">
               Contact
             </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th className="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider">
               Email
             </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th className="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider">
               Medical History
             </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th className="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider">
               Actions
             </th>
           </tr>
         </thead>
         <tbody>
           {patients?.map((patient) => (
-            <tr key={patient._id} className="hover:bg-gray-50">
-              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+            <tr key={patient._id} className="hover:bg-[#f0f0f0]">
+              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                 {patient.name}
               </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+              <td className="px-6 py-4 whitespace-nowrap text-sm ">
                 {patient.age}
               </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+              <td className="px-6 py-4 whitespace-nowrap text-sm ">
                 {patient.gender}
               </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+              <td className="px-6 py-4 whitespace-nowrap text-sm ">
                 {patient.contactNumber}
               </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+              <td className="px-6 py-4 whitespace-nowrap text-sm ">
                 {patient.email}
               </td>
-              <td className="px-6 py-4 text-sm text-gray-500">
-                {patient.medicalHistory}
+              <td className="px-6 py-4 text-sm ">
+                {patient.medicalHistory || "None"}
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                 <button
-                  className="text-white bg-[#9f0505] hover:bg-[#640505] px-3 py-1 rounded"
+                  className="text-white w-full  bg-[#9f0505] hover:bg-[#640505] px-3 py-2 rounded"
                   onClick={() => handleDelete(patient._id)}
                 >
+                  <span className="inline-block pr-1">
+                    <FaTrashAlt />
+                  </span>
                   Delete
                 </button>
               </td>
