@@ -1,0 +1,10 @@
+[build]
+  command = "npm run build"  # Change this to your actual build command
+  publish = "dist"  # Adjust for your framework (e.g., "build" for React, "public" for Gatsby)
+  functions = "netlify/functions"
+
+[build.environment]
+  NODE_VERSION = "18"  # Change this to the required Node.js version
+
+[cache]
+  paths = ["node_modules/.cache", ".next/cache"]  # Adjust based on your framework
