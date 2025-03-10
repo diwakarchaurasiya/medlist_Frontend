@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { doctors } from "../../assets/assets_frontend/assets";
 import { specialityData } from "../../assets/assets_frontend/assets";
-import DocsCard from "../docsCard/DocsCard";
+import DocsCard from "../docsCard/docsCard";
 import { Link, Navigate, useParams } from "react-router-dom";
 import fetchFromApi from "../../utility/fetchFromApi";
 import { FaUserDoctor } from "react-icons/fa6";
