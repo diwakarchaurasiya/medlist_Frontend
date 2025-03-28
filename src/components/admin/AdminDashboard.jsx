@@ -19,21 +19,21 @@ const AdminDashboard = () => {
   const [patients, setPatients] = useState([]);
 
   useEffect(() => {
-    fetchFromApi("http://localhost:5000/api/appointment", "get")
+    fetchFromApi("https://medlist-backend.onrender.com/api/appointment", "get")
       .then((data) => {
         setAppointments(data);
       })
       .catch((error) => {
         console.error("Error fetching data:", error.message);
       });
-    fetchFromApi("http://localhost:5000/api/doctor", "get")
+    fetchFromApi("https://medlist-backend.onrender.com/api/doctor", "get", null)
       .then((data) => {
         setDoctors(data.data);
       })
       .catch((error) => {
         console.error("Error fetching data:", error.message);
       });
-    fetchFromApi("http://localhost:5000/api/patient", "get")
+    fetchFromApi("https://medlist-backend.onrender.com/api/patient", "get")
       .then((data) => {
         setPatients(data.data);
       })
@@ -48,7 +48,7 @@ const AdminDashboard = () => {
   const totalPatients = patients.length || 0;
 
   return (
-    <div className="p-6 bg-gray-100 min-h-screen">
+    <div className="p-6 min-h-screen">
       <h1 className="text-3xl font-bold text-primary mb-6">Admin Dashboard</h1>
 
       {/* Summary Cards */}

@@ -8,7 +8,7 @@ const Appointments = () => {
 
   useEffect(() => {
     // Fetch appointments data from the API
-    fetchFromApi("http://localhost:5000/api/appointment", "get")
+    fetchFromApi("https://medlist-backend.onrender.com/api/appointment", "get")
       .then((data) => {
         setAppointments(data);
       })
@@ -19,9 +19,13 @@ const Appointments = () => {
   console.log(appointments);
   // Function to handle appointment status update
   const handleStatusUpdate = (id, status) => {
-    fetchFromApi(`http://localhost:5000/api/appointment/${id}`, "PUT", {
-      status: status,
-    })
+    fetchFromApi(
+      `https://medlist-backend.onrender.com/api/appointment/${id}`,
+      "PUT",
+      {
+        status: status,
+      }
+    )
       .then(() => {
         toast.success(`Appointment marked as ${status}`);
         // Update the local state to reflect the new status

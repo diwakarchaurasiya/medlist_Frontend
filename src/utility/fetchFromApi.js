@@ -1,13 +1,14 @@
-async function fetchFromApi(url, method, body = null) {
+async function fetchFromApi(url, method, body = null, authToken = null) {
     try {
         const options = {
-            method: method.toUpperCase(), // Ensure method is in uppercase
+            method: method.toUpperCase(),
             headers: {
                 'Content-Type': 'application/json',
+                ...(authToken && { Authorization: `Bearer ${authToken}` }) // Add token if provided
             },
         };
 
-        if (body && (method === 'POST' || method === 'PUT')) {
+        if (body && (method === 'POST' || method === 'PUT' || method === 'PATCH')) {
             options.body = JSON.stringify(body);
         }
 
@@ -17,11 +18,10 @@ async function fetchFromApi(url, method, body = null) {
             throw new Error(`Error: ${response.status} ${response.statusText}`);
         }
 
-        const data = await response.json();
-        return data;
+        return await response.json();
     } catch (error) {
         console.error('Error fetching data:', error.message);
-        throw error; // Re-throw the error for the caller to handle
+        throw error;
     }
 }
 

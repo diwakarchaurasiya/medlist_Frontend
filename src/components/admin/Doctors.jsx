@@ -8,7 +8,7 @@ const Doctors = () => {
 
   useEffect(() => {
     // Fetch doctors data from the API
-    fetchFromApi("http://localhost:5000/api/doctor", "get")
+    fetchFromApi("https://medlist-backend.onrender.com/api/doctor", "get")
       .then((data) => {
         setDoctors(data.data);
       })

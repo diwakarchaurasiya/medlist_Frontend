@@ -17,6 +17,7 @@ import PatientForm from "./components/Patient/PatientForm";
 import { useState } from "react";
 import ImageUpload from "./components/ImageUpload";
 import AdminDashboard from "./components/admin/AdminDashboard";
+import DoctorListingSkeleton from "./components/LoadingSkeleton/DoctorListingSkeleton";
 
 function App() {
   const [isLogin, setIsLogin] = useState(false);
@@ -33,6 +34,10 @@ function App() {
           <Route path="my-profile" element={<MyProfile />} />
           <Route path="my-appointments" element={<Myappoitment />} />
           <Route path="doctors/:speciality" element={<DoctorsListing />} />
+          <Route
+            path="doctors/:speciality"
+            element={<DoctorListingSkeleton />}
+          />
           // creation of doctor and updation of doctor
           <Route path="doctor/register" element={<DoctorForm />} />
           <Route path="doctor/upload" element={<ImageUpload />} />

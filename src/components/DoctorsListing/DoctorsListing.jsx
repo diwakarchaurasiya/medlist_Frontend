@@ -5,6 +5,7 @@ import DocsCard from "../docsCard/DocsCard";
 import { Link, Navigate, useParams } from "react-router-dom";
 import fetchFromApi from "../../utility/fetchFromApi";
 import { FaUserDoctor } from "react-icons/fa6";
+import DoctorListingSkeleton from "../LoadingSkeleton/DoctorListingSkeleton";
 
 const DoctorsListing = () => {
   let { speciality } = useParams();
@@ -13,10 +14,13 @@ const DoctorsListing = () => {
   const [showFilter, setShowFilter] = useState(false);
   const [sortBy, setSortBy] = useState(""); // State to manage sorting criteria
 
+  const [isloading, setIsLoading] = useState(true);
+
   useEffect(() => {
-    fetchFromApi("http://localhost:5000/api/doctor", "GET")
+    fetchFromApi("https://medlist-backend.onrender.com/api/doctor", "GET")
       .then((data) => {
         setAllSpecialists(data.data);
+        setIsLoading(false);
       })
       .catch((error) => console.error("Failed to fetch doctors:", error));
   }, []);
@@ -56,8 +60,9 @@ const DoctorsListing = () => {
     setSpecialists(sortedSpecialists);
     setSortBy(criteria);
   };
-
-  // CSS classes for form elements
+  if (isloading) {
+    return <DoctorListingSkeleton />;
+  } // CSS classes for form elements
   const labelClass = "text-primary text-sm md:w-1/4 p-4";
   const inputClass =
     "border border-primary rounded-md px-3 py-2 focus:outline-none focus:ring-1 focus:ring-primary text-xs";
