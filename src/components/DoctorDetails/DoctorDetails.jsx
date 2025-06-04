@@ -36,7 +36,7 @@ const DoctorDetails = () => {
   }, [docName]);
 
   return (
-    <div className="mx-auto p-6">
+    <div className="mx-auto p-6 w-full">
       {/* Doctor Profile Section */}
       <div className="flex flex-col md:flex-row items-center md:items-start">
         {/* Profile Picture */}

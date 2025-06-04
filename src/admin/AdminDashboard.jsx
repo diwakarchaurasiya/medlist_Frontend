@@ -6,7 +6,7 @@ import {
   FaStethoscope,
   FaRupeeSign,
 } from "react-icons/fa";
-import fetchFromApi from "../../utility/fetchFromApi";
+import fetchFromApi from "../utility/fetchFromApi";
 import { Link, Route, Routes } from "react-router-dom";
 import Patients from "./Patients";
 import Doctors from "./Doctors";

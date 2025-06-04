@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import fetchFromApi from "../../utility/fetchFromApi";
+import fetchFromApi from "../utility/fetchFromApi";
 import { toast } from "react-toastify";
 import { FaStethoscope, FaTrashAlt } from "react-icons/fa";
 
