@@ -5,7 +5,7 @@ import { Outlet } from "react-router-dom";
 
 const DoctorLayout = ({ isExpanded, toggleSidebar }) => {
   return (
-    <div className="flex h-screen w-full overflow-hidden bg-gray-100">
+    <div className="flex h-screen w-full overflow-hidden bg-gray-50">
       {/* Sidebar */}
       <div className="fixed top-0 left-0 h-full z-20">
         <Sidebar

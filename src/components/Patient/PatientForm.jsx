@@ -45,19 +45,10 @@ const PatientForm = () => {
   const groupClass = "mb-4";
 
   return (
-    <div className="max-w-3xl mx-auto p-6 bg-white rounded-xl shadow-lg">
+    <div className="max-w-3xl w-full mx-auto p-6 bg-white rounded-xl shadow-lg">
       <h2 className="text-2xl text-center font-bold text-gray-800 mb-6">
         Patient Registration
       </h2>
-      <p className="my-4">
-        Are You A Doctor ?
-        <Link
-          to="/doctor/register"
-          className="mx-2  text-primary p-2  hover:text-[green] transition-colors"
-        >
-          Register As Doctor
-        </Link>
-      </p>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         {/* Name */}
         <div className={groupClass}>

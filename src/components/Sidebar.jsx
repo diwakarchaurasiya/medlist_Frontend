@@ -16,10 +16,15 @@ import {
   Search,
   Menu,
   X,
+  User,
+  CalendarCheck2,
+  FileBarChart2,
+  DollarSign,
+  Users2, // Added Users2, which was implicitly used
+  FilePlus2, // Added FilePlus2, which was implicitly used
 } from "lucide-react";
 import { useState } from "react";
-import { BiCross } from "react-icons/bi";
-import { LuCross } from "react-icons/lu";
+// Removed BiCross and LuCross as they were not used and were causing import issues.
 
 const Sidebar = ({ isExpanded, toggleSidebar, role }) => {
   const [openDropdown, setOpenDropdown] = useState(null);
@@ -28,35 +33,6 @@ const Sidebar = ({ isExpanded, toggleSidebar, role }) => {
     setOpenDropdown(openDropdown === menu ? null : menu);
   };
 
-  // Menus for doctor and admin roles
-  const doctorMenu = [
-    {
-      name: "Dashboard",
-      path: "/doctor/dashboard",
-      icon: <LayoutDashboard className="w-6 h-6" />,
-    },
-    {
-      name: "My Appointments",
-      path: "/doctor/appointments",
-      icon: <CalendarClock className="w-6 h-6" />,
-    },
-    {
-      name: "Patient Records",
-      path: "/doctor/patients",
-      icon: <FolderSearch2 className="w-6 h-6" />,
-    },
-    {
-      name: "My Schedule",
-      path: "/doctor/schedule",
-      icon: <CalendarPlus className="w-6 h-6" />,
-    },
-    {
-      name: "Settings",
-      path: "/doctor/settings",
-      icon: <Settings className="w-6 h-6" />,
-    },
-  ];
-
   const adminMenu = [
     {
       name: "Dashboard",
@@ -64,40 +40,128 @@ const Sidebar = ({ isExpanded, toggleSidebar, role }) => {
       icon: <LayoutDashboard className="w-6 h-6" />,
     },
     {
+      name: "Patients",
+      icon: <Users2 className="w-6 h-6" />,
+      subMenu: [
+        {
+          name: "Add Patient",
+          path: "/admin/patients/add",
+          icon: <UserPlus className="w-5 h-5" />,
+        },
+        {
+          name: "Manage Patients",
+          path: "/admin/patients/manage",
+          icon: <Users2 className="w-5 h-5" />,
+        },
+      ],
+    },
+    {
       name: "Doctors",
       icon: <Stethoscope className="w-6 h-6" />,
-      subItems: [
+      subMenu: [
         {
           name: "Add Doctor",
           path: "/admin/doctors/add",
-          icon: <UserPlus className="w-4 h-4" />,
+          icon: <FilePlus2 className="w-5 h-5" />,
         },
         {
           name: "Manage Doctors",
           path: "/admin/doctors/manage",
-          icon: <UserCog className="w-4 h-4" />,
+          icon: <Stethoscope className="w-5 h-5" />,
+        },
+      ],
+    },
+    {
+      name: "Appointments",
+      icon: <CalendarClock className="w-6 h-6" />,
+      subMenu: [
+        {
+          name: "Book Appointment",
+          path: "/admin/appointments/book",
+          icon: <CalendarCheck2 className="w-5 h-5" />,
+        },
+        {
+          name: "Manage Appointments",
+          path: "/admin/appointments/manage",
+          icon: <CalendarClock className="w-5 h-5" />,
+        },
+      ],
+    },
+    {
+      name: "Reports",
+      icon: <FileBarChart2 className="w-6 h-6" />,
+      subMenu: [
+        {
+          name: "Patient Reports",
+          path: "/admin/reports/patients",
+          icon: <FileText className="w-5 h-5" />,
+        },
+        {
+          name: "Doctor Reports",
+          path: "/admin/reports/doctors",
+          icon: <Stethoscope className="w-5 h-5" />,
+        },
+        {
+          name: "Appointment Reports",
+          path: "/admin/reports/appointments",
+          icon: <CalendarClock className="w-5 h-5" />,
+        },
+      ],
+    },
+    {
+      name: "Fees Payment",
+      path: "/admin/fees",
+      icon: <DollarSign className="w-6 h-6" />,
+    },
+  ];
+
+  const doctorMenu = [
+    {
+      name: "Dashboard",
+      path: "/doctor/dashboard",
+      icon: <LayoutDashboard className="w-6 h-6" />,
+    },
+    {
+      name: "Appointments",
+      icon: <CalendarClock className="w-6 h-6" />,
+      subMenu: [
+        {
+          name: "View Appointments",
+          path: "/doctor/appointments/view",
+          icon: <CalendarCheck2 className="w-5 h-5" />,
+        },
+        {
+          name: "Schedule Availability",
+          path: "/doctor/appointments/schedule",
+          icon: <CalendarPlus className="w-5 h-5" />,
         },
       ],
     },
     {
       name: "Patients",
-      path: "/admin/patients",
       icon: <Users className="w-6 h-6" />,
-    },
-    {
-      name: "Appointments",
-      path: "/admin/appointments",
-      icon: <CalendarClock className="w-6 h-6" />,
+      subMenu: [
+        {
+          name: "My Patients",
+          path: "/doctor/patients/my-patients",
+          icon: <UserSquare className="w-5 h-5" />,
+        },
+        {
+          name: "Search Patients",
+          path: "/doctor/patients/search",
+          icon: <Search className="w-5 h-5" />,
+        },
+      ],
     },
     {
       name: "Reports",
-      path: "/admin/reports",
+      path: "/doctor/reports",
       icon: <FileText className="w-6 h-6" />,
     },
     {
-      name: "Settings",
-      path: "/admin/settings",
-      icon: <Settings className="w-6 h-6" />,
+      name: "Profile Settings",
+      path: "/doctor/settings",
+      icon: <UserCog className="w-6 h-6" />,
     },
   ];
 
@@ -122,12 +186,12 @@ const Sidebar = ({ isExpanded, toggleSidebar, role }) => {
         title="Home"
       >
         {isExpanded && (
-          <h1 className="text-2xl font-bold inline-block ml-2">MedPortal</h1>
+          <h1 className="text-2xl font-bold inline-block ml-2">MedList</h1>
         )}
         {!isExpanded ? (
-          <Menu className="w-8 h-8 text-black  " onClick={toggleSidebar} />
+          <Menu className="w-8 h-8 text-black" onClick={toggleSidebar} />
         ) : (
-          <X className="w-8 h-8  ml-8 text-black" onClick={toggleSidebar} />
+          <X className="w-8 h-8 ml-12 text-black" onClick={toggleSidebar} />
         )}
       </Link>
 
@@ -136,7 +200,7 @@ const Sidebar = ({ isExpanded, toggleSidebar, role }) => {
         <ul className="space-y-2">
           {menuItems.map((item) => (
             <li key={item.name} className="relative group">
-              {item.subItems ? (
+              {item.subMenu ? (
                 <>
                   {/* Parent item button */}
                   <button
@@ -162,13 +226,12 @@ const Sidebar = ({ isExpanded, toggleSidebar, role }) => {
                   {/* Dropdown submenu */}
                   {openDropdown === item.name && (
                     <ul className="ml-4 space-y-1">
-                      {item.subItems.map((subItem) => (
+                      {item.subMenu.map((subItem) => (
                         <li key={subItem.name} className="my-2">
                           <NavLink
                             to={subItem.path}
                             className={({ isActive }) =>
-                              `flex items-center w-full p-2 rounded-md transition-all  
-                              ${
+                              `flex items-center w-full p-2 rounded-md transition-all ${
                                 isActive
                                   ? "bg-black text-white"
                                   : "bg-[#F1F2F5] hover:bg-[#E5E5E5]"

@@ -44,7 +44,7 @@ const ProtectedRoute = ({ isLogin, role, allowedRoles, children }) => {
 
 function App() {
   const [isLogin, setIsLogin] = useState(true);
-  const [role, setRole] = useState("admin"); // or doctor/patient
+  const [role, setRole] = useState("admin"); //admin or doctor/patient
   const [isExpanded, setIsExpanded] = useState(false);
   const toggleSidebar = () => setIsExpanded((prev) => !prev);
 
