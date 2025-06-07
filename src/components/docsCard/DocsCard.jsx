@@ -9,7 +9,7 @@ const DocsCard = ({ doc }) => {
       key={doc._id}
       onClick={() => scrollTo(0, 0)}
     >
-      <Link to={"/doctor/" + doc._id}>
+      <Link to={"/doc/" + doc._id}>
         <img
           className="bg-primary hover:bg-secondary transition-all duration-400 h-auto md:h-56 w-full object-cover"
           src={doc.profileImage}

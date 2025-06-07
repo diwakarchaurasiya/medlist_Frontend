@@ -67,7 +67,7 @@ const Login = ({ isLogin, setIsLogin }) => {
   const urlDoctor = "http://localhost:5000/api/doctor/login";
 
   return (
-    <div className="flex justify-center items-center my-10">
+    <div className="min-h-screen flex justify-center items-center">
       <div className="bg-white rounded-md shadow-md  w-full max-w-lg p-6">
         <h1 className="text-center text-3xl font-bold text-primary mb-2">
           Login {selectedUser}

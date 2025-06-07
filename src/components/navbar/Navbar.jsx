@@ -5,6 +5,7 @@ import { FaBuffer, FaSignOutAlt, FaUser, FaUserLock } from "react-icons/fa";
 import { LuImagePlus } from "react-icons/lu";
 
 import "./navbar.css";
+import { Lock } from "lucide-react";
 const Navbar = ({ isLogin, setIsLogin }) => {
   // const [isLogin, setIsLogin] = useState(false);
   const [showMenu, setshowMenu] = useState(false);
@@ -43,8 +44,13 @@ const Navbar = ({ isLogin, setIsLogin }) => {
             <li>
               <Link to="/contact">contact</Link>
             </li>
-            <li className="bg-secondary text-white px-4 py-1 rounded-md">
-              <Link to="/admin">admin</Link>
+            <li className="bg-secondary text-white px-3 py-1 rounded-md">
+              <Link to="/login">
+                admin
+                <span className="inline-block ml-2">
+                  <Lock className="w-4 h-4" />
+                </span>
+              </Link>
             </li>
           </ul>
         </div>

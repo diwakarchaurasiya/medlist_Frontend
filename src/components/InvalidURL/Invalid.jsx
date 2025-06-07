@@ -1,24 +1,27 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { assets } from "../../assets/assets_frontend/assets";
+
 const Invalid = () => {
   return (
-    <div className="h-3/4 flex flex-col justify-center items-center bg-primary text-center text-white p-10 rounded-md my-10">
-      {/* Sad face image */}
-      <img src={assets.sad404} alt="404 sad face" className="w-40 mb-6" />
+    <div className="min-h-screen flex flex-col justify-center items-center bg-white text-black px-6">
+      {/* 404 Image */}
+      <img src={assets.sad404} alt="404" className="w-36 mb-8" />
 
-      {/* 404 text */}
-      <h1 className="text-4xl md:text-6xl font-bold mb-4">
-        Looks like you're lost
+      {/* Title */}
+      <h1 className="text-3xl md:text-5xl font-semibold mb-4 text-center">
+        Oops! Page Not Found
       </h1>
 
-      {/* Error message */}
-      <p className="text-lg mb-8">404 error</p>
+      {/* Subtext */}
+      <p className="text-base text-gray-600 mb-6 text-center">
+        The page you are looking for doesn’t exist or has been moved.
+      </p>
 
-      {/* Go back button */}
+      {/* Back to Home Button */}
       <Link to="/">
-        <button className="bg-secondary hover:bg-[green] text-white font-semibold py-2 px-6 rounded-full shadow-lg transition duration-300">
-          Back to home page ...
+        <button className="bg-primary text-white px-6 py-2 rounded-full font-medium hover:opacity-90 transition duration-200">
+          Go to Homepage
         </button>
       </Link>
     </div>
