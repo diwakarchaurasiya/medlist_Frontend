@@ -196,7 +196,6 @@ const AppointmentBooking = () => {
         doctorId: selectedDoctor._id,
         date: selectedDate, // Changed to 'date' as per backend expectation
         time: selectedTime,
-        reason: "General Checkup", // Added a default reason as it's typically required
         status: "Scheduled", // Default status
         paymentStatus: selectedPaymentStatus,
         amount: selectedDoctor.appointmentFees,

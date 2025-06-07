@@ -63,7 +63,7 @@ const AppointmentManagementPage = () => {
 
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
-  const [appointmentsPerPage] = useState(7); // Number of rows per page as per image
+  const [appointmentsPerPage] = useState(10); // Number of rows per page as per image
 
   // --- Data Fetching ---
   useEffect(() => {
