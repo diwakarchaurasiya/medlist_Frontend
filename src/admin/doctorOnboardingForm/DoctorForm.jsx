@@ -61,19 +61,10 @@ const DoctorForm = () => {
   ];
 
   return (
-    <div className="max-w-3xl mx-auto p-6 bg-white rounded-xl shadow-lg">
+    <div className="max-w-7xl mx-auto p-6 bg-white rounded-xl shadow-lg">
       <h2 className="text-2xl text-center font-bold text-gray-800 mb-6">
         Doctor Registration
       </h2>
-      <p className="my-4">
-        Are You A Patient ?
-        <Link
-          to="/patient/register"
-          className="mx-2  text-primary  hover:text-[green] transition-colors"
-        >
-          Register As Patient
-        </Link>
-      </p>
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="space-y-6"

@@ -190,9 +190,7 @@ const Login = ({ isLogin, setIsLogin }) => {
             Login
           </button>
         </form>
-        {selectedUser === "Admin" ? (
-          ""
-        ) : (
+        {selectedUser === "Patient" ? (
           <p className="text-center text-sm mt-4">
             Don't Have Account?
             <Link
@@ -202,6 +200,8 @@ const Login = ({ isLogin, setIsLogin }) => {
               Register Here
             </Link>
           </p>
+        ) : (
+          ""
         )}
       </div>
     </div>

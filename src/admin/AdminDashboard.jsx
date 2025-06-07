@@ -203,52 +203,44 @@ import {
   XCircle,
   Clock,
   Eye,
+  LayoutDashboard,
+  UserPlus,
+  CalendarCheck2,
+  FilePlus2,
 } from "lucide-react";
 import { FaRupeeSign } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
-// Navigation options data
 const navigationOptions = [
   {
     id: 1,
     title: "Dashboard",
-    icon: BarChart3,
-    description: "Overview and analytics",
-    href: "/admin/dashboard",
+    icon: <LayoutDashboard className="w-5 h-5" />,
+    linkTo: "/admin/dashboard",
   },
   {
     id: 2,
-    title: "Manage Doctors",
-    icon: UserCheck,
-    description: "Doctor management",
-    href: "/admin/doctors",
-  },
-  {
-    id: 3,
-    title: "Manage Patients",
-    icon: Users,
-    description: "Patient management",
-    href: "/admin/patients",
+    title: "Add Patient",
+    icon: <UserPlus className="w-5 h-5" />,
+    linkTo: "/admin/patients/add",
   },
   {
     id: 4,
-    title: "Appointments",
-    icon: Calendar,
-    description: "Appointment oversight",
-    href: "/admin/appointments",
-  },
-  {
-    id: 5,
-    title: "Reports",
-    icon: FileText,
-    description: "Generate reports",
-    href: "/admin/reports",
+    title: "Add Doctor",
+    icon: <FilePlus2 className="w-5 h-5" />,
+    linkTo: "/admin/doctors/add",
   },
   {
     id: 6,
-    title: "Settings",
-    icon: Settings,
-    description: "System configuration",
-    href: "/admin/settings",
+    title: "Book Appointment",
+    icon: <CalendarCheck2 className="w-5 h-5" />,
+    linkTo: "/admin/appointments/book",
+  },
+  {
+    id: 11,
+    title: "Fees Payment",
+    icon: <DollarSign className="w-5 h-5" />,
+    linkTo: "/admin/fees",
   },
 ];
 
@@ -482,37 +474,24 @@ export default function AdminDashboard() {
 
         {/* Quick Navigation */}
         <div>
-          <h2 className=" text-sm font-thin text-gray-500 mt-4 my-2">
+          <h2 className="text-md text-gray-500 my-2 font-light">
             Quick Navigation
           </h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            {navigationOptions.map((option) => {
-              const IconComponent = option.icon;
-              return (
-                <div
-                  key={option.id}
-                  className={`bg-white rounded-lg p-4 cursor-pointer transition-all duration-200 hover:shadow-lg  border-2 ${
-                    hoveredCard === option.id
-                      ? "border-[#66B406] shadow-lg"
-                      : "border-gray-100"
-                  }`}
-                  onMouseEnter={() => setHoveredCard(option.id)}
-                  onMouseLeave={() => setHoveredCard(null)}
-                >
-                  <div className="text-center">
-                    <div className="flex justify-center mb-2">
-                      <IconComponent size={24} className="text-[#66B406]" />
-                    </div>
-                    <h3 className="font-medium text-gray-900 text-sm">
-                      {option.title}
-                    </h3>
-                    <p className="text-xs text-gray-500 mt-1">
-                      {option.description}
-                    </p>
-                  </div>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+            {navigationOptions.map((option) => (
+              <Link
+                to={option.linkTo}
+                key={option.id}
+                className="bg-white rounded-lg p-4 cursor-pointer transition-all duration-200 hover:shadow-lg hover:scale-105 border-2 hover:border-primary"
+              >
+                <div className="flex flex-col items-center text-center">
+                  <div className="text-2xl p-2 text-primary">{option.icon}</div>
+                  <h3 className="font-medium text-gray-900 text-sm">
+                    {option.title}
+                  </h3>
                 </div>
-              );
-            })}
+              </Link>
+            ))}
           </div>
         </div>
 

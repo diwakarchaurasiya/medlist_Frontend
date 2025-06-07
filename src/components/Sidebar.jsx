@@ -180,20 +180,22 @@ const Sidebar = ({ isExpanded, toggleSidebar, role }) => {
       }`}
     >
       {/* Logo */}
-      <Link
-        to={menuItems[0]?.path || "/"}
-        className="flex items-center justify-center mb-4"
-        title="Home"
-      >
+      <div className="flex items-center justify-center mb-4" title="Home">
         {isExpanded && (
           <h1 className="text-2xl font-bold inline-block ml-2">MedList</h1>
         )}
         {!isExpanded ? (
-          <Menu className="w-8 h-8 text-black" onClick={toggleSidebar} />
+          <Menu
+            className="w-8 h-8 text-black cursor-pointer"
+            onClick={toggleSidebar}
+          />
         ) : (
-          <X className="w-8 h-8 ml-12 text-black" onClick={toggleSidebar} />
+          <X
+            className="w-8 h-8 ml-12 text-black cursor-pointer"
+            onClick={toggleSidebar}
+          />
         )}
-      </Link>
+      </div>
 
       {/* Navigation menu */}
       <nav>
@@ -257,7 +259,7 @@ const Sidebar = ({ isExpanded, toggleSidebar, role }) => {
                   className={({ isActive }) =>
                     `flex items-center ${
                       isExpanded ? "justify-start" : "justify-center"
-                    } p-2 rounded-md transition-all ${
+                    } p-2 rounded-md transition-all text-nowrap ${
                       isActive ? "bg-black text-white" : "hover:bg-[#F1F2F5]"
                     }`
                   }

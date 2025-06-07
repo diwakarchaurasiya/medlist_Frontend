@@ -34,6 +34,10 @@ import AdminDashboard from "./admin/AdminDashboard";
 import PatientLayout from "./LAYOUTS/PatientLayout";
 import DoctorLayout from "./LAYOUTS/DoctorLayout";
 import AdminLayout from "./LAYOUTS/AdminLayout";
+import Doctors from "./Doctor/DoctorManagement";
+import AppointmentBooking from "./admin/BookAppointmentAdmin";
+import Patients from "./admin/PatientManagement";
+import AppointmentManagementPage from "./admin/AppointmentManagement";
 
 // Role-Based Protection
 const ProtectedRoute = ({ isLogin, role, allowedRoles, children }) => {
@@ -44,8 +48,8 @@ const ProtectedRoute = ({ isLogin, role, allowedRoles, children }) => {
 
 function App() {
   const [isLogin, setIsLogin] = useState(true);
-  const [role, setRole] = useState("doctor"); //admin or doctor/patient
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [role, setRole] = useState("admin"); //admin or doctor/patient
+  const [isExpanded, setIsExpanded] = useState(true);
   const toggleSidebar = () => setIsExpanded((prev) => !prev);
 
   return (
@@ -138,6 +142,16 @@ function App() {
             }
           >
             <Route path="dashboard" element={<AdminDashboard />} />
+            <Route path="doctors/add" element={<DoctorForm />} />
+            <Route path="patients/add" element={<PatientForm />} />
+            <Route path="doctors/manage" element={<Doctors />} />
+            <Route path="patients/manage" element={<Patients />} />
+            <Route
+              path="appointments/manage"
+              element={<AppointmentManagementPage />}
+            />
+            <Route path="appointments/book" element={<AppointmentBooking />} />
+
             <Route path="*" element={<div>Admin: Page Not Found</div>} />
           </Route>
 

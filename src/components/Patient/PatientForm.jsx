@@ -45,7 +45,7 @@ const PatientForm = () => {
   const groupClass = "mb-4";
 
   return (
-    <div className="max-w-3xl w-full mx-auto p-6 bg-white rounded-xl shadow-lg">
+    <div className="max-w-7xl w-full mx-auto p-6 bg-white rounded-xl shadow-lg">
       <h2 className="text-2xl text-center font-bold text-gray-800 mb-6">
         Patient Registration
       </h2>
