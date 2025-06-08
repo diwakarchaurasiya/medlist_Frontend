@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import axios from "axios";
 import { format, parseISO, isPast, isToday } from "date-fns";
-// Ensure these Lucide React icons are installed: npm install lucide-react
+import { Link } from "react-router-dom";
 import {
   Search,
   CalendarDays,
@@ -72,20 +72,6 @@ const AppointmentManagementPage = () => {
       try {
         setLoading(true);
         const response = await axios.get(API_URL);
-        console.log("Raw API Response:", response.data); // Inspect this in your browser console
-
-        // Example: Check the first item for 'date' and 'time'
-        if (response.data && response.data.length > 0) {
-          console.log("First appointment object:", response.data[0]);
-          console.log(
-            "Does first appointment have 'date'?",
-            response.data[0]?.appointmentDate
-          );
-          console.log(
-            "Does first appointment have 'time'?",
-            response.data[0]?.appointmentTime
-          );
-        }
 
         setAppointments(response.data);
       } catch (err) {
@@ -301,10 +287,12 @@ const AppointmentManagementPage = () => {
         <h1 className="text-2xl font-bold text-gray-800">
           Appointment Management
         </h1>
-        <button className="flex items-center px-5 py-2 bg-primary text-white rounded-md hover:bg-blue-600 transition-colors duration-200 shadow-md">
-          <Plus className="w-5 h-5 mr-2" />
-          New Appointment
-        </button>
+        <Link to="/admin/appointments/book" className="no-underline">
+          <button className="flex items-center px-5 py-2 bg-primary text-white rounded-md hover:bg-secondary transition-colors duration-200 shadow-md">
+            <Plus className="w-5 h-5 mr-2" />
+            New Appointment
+          </button>
+        </Link>
       </div>
 
       {/* Tabs for New/Completed Appointments */}

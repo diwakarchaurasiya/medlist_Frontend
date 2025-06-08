@@ -38,6 +38,7 @@ import Doctors from "./Doctor/DoctorManagement";
 import AppointmentBooking from "./admin/BookAppointmentAdmin";
 import Patients from "./admin/PatientManagement";
 import AppointmentManagementPage from "./admin/AppointmentManagement";
+import AdminProfile from "./admin/AdminProfile";
 
 // Role-Based Protection
 const ProtectedRoute = ({ isLogin, role, allowedRoles, children }) => {
@@ -146,6 +147,7 @@ function App() {
             <Route path="patients/add" element={<PatientForm />} />
             <Route path="doctors/manage" element={<Doctors />} />
             <Route path="patients/manage" element={<Patients />} />
+            <Route path="profile" element={<AdminProfile />} />
             <Route
               path="appointments/manage"
               element={<AppointmentManagementPage />}

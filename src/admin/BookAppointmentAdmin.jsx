@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Search, Clock } from "lucide-react"; // Assuming you have Lucide React installed
+import DoctorManagementSkeleton from "../components/LoadingSkeleton/DoctorManagementSkeleton";
 
 const AppointmentBooking = () => {
   // State
@@ -153,14 +154,12 @@ const AppointmentBooking = () => {
     setShowPatientDropdown(false);
   };
 
-  // Days Grid Functions
   const handleDaySelect = (index, day) => {
-    setSelectedDayIndex(index);
+    setSelectedDayIndex(index); // This is 0–6 (Sunday–Saturday)
     setSelectedDate(day.date);
     setSelectedTime(null);
 
-    if (selectedDoctor && selectedDoctor.workingHours) {
-      // Check if workingHours exists
+    if (selectedDoctor?.workingHours) {
       setTimeSlots(
         generateTimeSlots(
           selectedDoctor.workingHours.start,
@@ -168,8 +167,13 @@ const AppointmentBooking = () => {
         )
       );
     } else {
-      setTimeSlots([]); // No working hours for selected doctor
+      setTimeSlots([]);
     }
+  };
+
+  const getDayNameFromIndex = (index) => {
+    const dayNames = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
+    return dayNames[index];
   };
 
   // Time Slots Functions
@@ -187,28 +191,35 @@ const AppointmentBooking = () => {
       selectedPaymentStatus
     );
   };
+  const getDayName = (dateString) => {
+    const dayNames = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
+    const date = new Date(dateString);
+    return dayNames[date.getDay()];
+  };
 
   const handleBookAppointment = async () => {
-    // Made async for backend call
     if (validateForm()) {
       const appointmentData = {
         patientId: selectedPatient._id,
         doctorId: selectedDoctor._id,
-        date: selectedDate, // Changed to 'date' as per backend expectation
-        time: selectedTime,
-        status: "Scheduled", // Default status
+        appointmentDate: selectedDate,
+        appointmentTime: selectedTime,
+        status: "Scheduled",
         paymentStatus: selectedPaymentStatus,
         amount: selectedDoctor.appointmentFees,
+        appointmentDay: getDayNameFromIndex(selectedDayIndex), // ✅ FIXED
       };
+      console.log("Booking appointment with data:", appointmentData);
 
       try {
         const response = await fetch(
-          "https://medlist-backend.onrender.com/api/appointment",
+          "http://localhost:5000/api/appointment/create",
           {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
             },
+
             body: JSON.stringify(appointmentData),
           }
         );
@@ -271,11 +282,7 @@ const AppointmentBooking = () => {
   }, []);
 
   if (loading) {
-    return (
-      <div className="flex justify-center items-center h-screen text-xl text-gray-700">
-        Loading data...
-      </div>
-    );
+    return <DoctorManagementSkeleton />;
   }
 
   return (

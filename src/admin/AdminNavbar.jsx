@@ -43,7 +43,7 @@ const AdminNavbar = ({
       </div>
 
       {/* Right Side - Icons */}
-      <div className="flex items-center space-x-6">
+      <div className="flex items-center space-x-6 ">
         <Expand
           onClick={toggleFullScreen}
           className="text-white w-6 h-6 cursor-pointer rounded"
