@@ -1,5 +1,14 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Search, Clock } from "lucide-react"; // Assuming you have Lucide React installed
+import {
+  Search,
+  Clock,
+  Calendar,
+  DollarSign,
+  User,
+  Medal,
+  CheckCircle,
+  XCircle,
+} from "lucide-react"; // Assuming you have Lucide React installed
 import DoctorManagementSkeleton from "../components/LoadingSkeleton/DoctorManagementSkeleton";
 
 const AppointmentBooking = () => {
@@ -19,6 +28,7 @@ const AppointmentBooking = () => {
   const [days, setDays] = useState([]);
   const [timeSlots, setTimeSlots] = useState([]);
   const [loading, setLoading] = useState(true); // Added loading state for fetching data
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false); // State for the success popup
 
   // Refs for dropdowns to handle clicks outside
   const doctorSearchRef = useRef(null);
@@ -225,7 +235,9 @@ const AppointmentBooking = () => {
         );
 
         if (response.ok) {
-          alert("Appointment booked successfully!"); // Using alert as toastify wasn't in provided code
+          // Show success popup instead of alert
+          setShowSuccessPopup(true);
+
           // Reset form after successful booking
           setSelectedDoctor(null);
           setSelectedPatient(null);
@@ -286,7 +298,7 @@ const AppointmentBooking = () => {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-7xl">
+    <div className=" mx-auto px-4 max-w-7xl">
       <div className="bg-white rounded-xl shadow-lg overflow-hidden">
         {/* Header */}
         <div className="text-center py-8 px-8 border-b border-gray-200">
@@ -316,13 +328,7 @@ const AppointmentBooking = () => {
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
                   onChange={handleDoctorSearch}
                   onFocus={() => setShowDoctorDropdown(true)}
-                  value={
-                    selectedDoctor
-                      ? selectedDoctor.name
-                      : doctorSearchRef.current
-                      ? doctorSearchRef.current.value
-                      : ""
-                  } // Keep input value consistent
+                  value={selectedDoctor ? selectedDoctor.name : ""} // Show selected doctor's name in the input field
                 />
                 {showDoctorDropdown && (
                   <div
@@ -361,35 +367,6 @@ const AppointmentBooking = () => {
                   </div>
                 )}
               </div>
-              {selectedDoctor && (
-                <div
-                  id="selectedDoctor"
-                  className="mt-2 p-3 bg-blue-50 rounded-lg border border-blue-200"
-                >
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <div className="font-medium text-blue-800">
-                        {selectedDoctor.name}
-                      </div>
-                      <div className="text-sm text-blue-600">
-                        {selectedDoctor.specialization}
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-sm font-medium text-blue-800">
-                        ₹{selectedDoctor.appointmentFees}
-                      </div>
-                      <div className="text-xs text-blue-600">
-                        {selectedDoctor.workingHours
-                          ? `${formatTime(
-                              selectedDoctor.workingHours.start
-                            )} - ${formatTime(selectedDoctor.workingHours.end)}`
-                          : "N/A"}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
             </div>
 
             {/* Patient Selection */}
@@ -406,13 +383,7 @@ const AppointmentBooking = () => {
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
                   onChange={handlePatientSearch}
                   onFocus={() => setShowPatientDropdown(true)}
-                  value={
-                    selectedPatient
-                      ? selectedPatient.name
-                      : patientSearchRef.current
-                      ? patientSearchRef.current.value
-                      : ""
-                  } // Keep input value consistent
+                  value={selectedPatient ? selectedPatient.name : ""} // Show selected patient's name in the input field
                 />
                 {showPatientDropdown && (
                   <div
@@ -443,21 +414,6 @@ const AppointmentBooking = () => {
                   </div>
                 )}
               </div>
-              {selectedPatient && (
-                <div
-                  id="selectedPatient"
-                  className="mt-2 p-3 bg-green-50 rounded-lg border border-green-200"
-                >
-                  <div>
-                    <div className="font-medium text-green-800">
-                      {selectedPatient.name}
-                    </div>
-                    <div className="text-sm text-green-600">
-                      {selectedPatient.email}
-                    </div>
-                  </div>
-                </div>
-              )}
             </div>
 
             {/* Days Selection */}
@@ -577,74 +533,52 @@ const AppointmentBooking = () => {
               </h3>
 
               <div id="previewContent" className="space-y-4 text-black">
-                {selectedDoctor ? (
-                  <div className="border border-primary rounded-lg p-4">
-                    <h4 className="font-semibold text-primary mb-2">Doctor</h4>
-                    <p>{selectedDoctor.name}</p>
-                    <p className="text-sm text-gray-600">
-                      {selectedDoctor.specialization}
-                    </p>
-                    <p className="text-sm text-gray-600">
-                      {selectedDoctor.workingHours
-                        ? `${formatTime(
-                            selectedDoctor.workingHours.start
-                          )} - ${formatTime(selectedDoctor.workingHours.end)}`
+                <div className="border border-primary rounded-lg p-4 flex items-center justify-between">
+                  <h4 className="font-semibold text-primary flex items-center gap-2">
+                    <Medal className="h-5 w-5" /> Doctor:{" "}
+                    <span className="text-gray-800">
+                      {selectedDoctor ? selectedDoctor.name : "N/A"}
+                    </span>
+                  </h4>
+                  <h4 className="font-semibold text-primary flex items-center gap-2">
+                    <User className="h-5 w-5" /> Patient:{" "}
+                    <span className="text-gray-800">
+                      {selectedPatient ? selectedPatient.name : "N/A"}
+                    </span>
+                  </h4>
+                </div>
+
+                <div className="border border-primary rounded-lg p-4 flex items-center justify-between">
+                  <h4 className="font-semibold text-primary flex items-center gap-2">
+                    <Calendar className="h-5 w-5" /> Date:{" "}
+                    <span className="text-gray-800">
+                      {selectedDate
+                        ? `${selectedDate} (${getWeekday(selectedDate)})`
                         : "N/A"}
-                    </p>
-                  </div>
-                ) : (
-                  <div className="text-sm text-gray-500">
-                    No doctor selected
-                  </div>
-                )}
+                    </span>
+                  </h4>
+                  <h4 className="font-semibold text-primary flex items-center gap-2">
+                    <Clock className="h-5 w-5" /> Time:{" "}
+                    <span className="text-gray-800">
+                      {selectedTime ? formatTime(selectedTime) : "N/A"}
+                    </span>
+                  </h4>
+                </div>
 
-                {selectedPatient ? (
-                  <div className="border border-primary rounded-lg p-4">
-                    <h4 className="font-semibold text-primary mb-2">Patient</h4>
-                    <p>{selectedPatient.name}</p>
-                    <p className="text-sm text-gray-600">
-                      {selectedPatient.email}
-                    </p>
-                  </div>
-                ) : (
-                  <div className="text-sm text-gray-500">
-                    No patient selected
-                  </div>
-                )}
-
-                {selectedDate && (
-                  <div className="border border-primary rounded-lg p-4">
-                    <h4 className="font-semibold text-primary mb-2">Date</h4>
-                    <p>
-                      {selectedDate} ({getWeekday(selectedDate)})
-                    </p>
-                  </div>
-                )}
-
-                {selectedTime && (
-                  <div className="border border-primary rounded-lg p-4">
-                    <h4 className="font-semibold text-primary mb-2">Time</h4>
-                    <p>{formatTime(selectedTime)}</p>
-                  </div>
-                )}
-
-                {selectedPaymentStatus && (
-                  <div className="border border-primary rounded-lg p-4">
-                    <h4 className="font-semibold text-primary mb-2">
-                      Payment Status
-                    </h4>
-                    <p>{selectedPaymentStatus}</p>
-                  </div>
-                )}
-
-                {selectedDoctor && (
-                  <div className="border border-primary rounded-lg p-4">
-                    <h4 className="font-semibold text-primary mb-2">
-                      Amount to Pay
-                    </h4>
-                    <p>₹{selectedDoctor.appointmentFees}</p>
-                  </div>
-                )}
+                <div className="border border-primary rounded-lg p-4 flex items-center justify-between">
+                  <h4 className="font-semibold text-primary flex items-center gap-2">
+                    <DollarSign className="h-5 w-5" /> Payment Status:{" "}
+                    <span className="text-gray-800">
+                      {selectedPaymentStatus ? selectedPaymentStatus : "N/A"}
+                    </span>
+                  </h4>
+                  <h4 className="font-semibold text-primary flex items-center gap-2">
+                    <DollarSign className="h-5 w-5" /> Amount:{" "}
+                    <span className="text-gray-800">
+                      ₹{selectedDoctor ? selectedDoctor.appointmentFees : "0"}
+                    </span>
+                  </h4>
+                </div>
 
                 {!validateForm() && (
                   <div className="text-sm text-gray-500">
@@ -656,6 +590,58 @@ const AppointmentBooking = () => {
           </div>
         </div>
       </div>
+
+      {/* Success Popup */}
+      {showSuccessPopup && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white p-8 rounded-lg shadow-xl text-center max-w-sm w-full mx-auto">
+            <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
+            <h2 className="text-2xl font-bold text-gray-800 mb-4">
+              Appointment Booked!
+            </h2>
+            <p className="text-gray-700 mb-2">
+              Your appointment for{" "}
+              <span className="font-semibold text-primary">
+                {selectedPatient?.name}
+              </span>{" "}
+              with{" "}
+              <span className="font-semibold text-primary">
+                {selectedDoctor?.name}
+              </span>{" "}
+              is confirmed!
+            </p>
+            <div className="text-left bg-gray-50 p-4 rounded-md mt-4">
+              <p className="text-gray-700 flex items-center mb-2">
+                <User className="h-4 w-4 mr-2 text-primary" />
+                <span className="font-medium">Patient:</span>{" "}
+                {selectedPatient?.name}
+              </p>
+              <p className="text-gray-700 flex items-center mb-2">
+                <Calendar className="h-4 w-4 mr-2 text-primary" />
+                <span className="font-medium">Date:</span>{" "}
+                {selectedDate &&
+                  new Date(selectedDate).toLocaleDateString("en-US", {
+                    weekday: "long",
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  })}
+              </p>
+              <p className="text-gray-700 flex items-center">
+                <Clock className="h-4 w-4 mr-2 text-primary" />
+                <span className="font-medium">Time:</span>{" "}
+                {selectedTime && formatTime(selectedTime)}
+              </p>
+            </div>
+            <button
+              className="mt-6 px-6 py-2 bg-primary text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50 transition-all"
+              onClick={() => setShowSuccessPopup(false)}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

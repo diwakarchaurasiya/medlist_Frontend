@@ -4,39 +4,141 @@ import { FaUserLock } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
+// --- Cloudinary Configuration for Frontend ---
+// Your Cloud Name from your Cloudinary dashboard
+const CLOUDINARY_CLOUD_NAME = "dhq7wpnai"; // <--- Use your provided Cloud Name
+// The name of the UNSIGNED upload preset you created in Cloudinary
+const CLOUDINARY_UPLOAD_PRESET = "my_doctor_uploads"; // <--- REPLACE THIS with your preset name
+
 const DoctorForm = () => {
   const {
     register,
     handleSubmit,
     formState: { errors },
+    setValue,
   } = useForm();
 
-  let navigate = useNavigate();
+  const navigate = useNavigate();
+
+  const [profileImageFile, setProfileImageFile] = useState(null);
+  const [profileImagePreview, setProfileImagePreview] = useState(null);
+  const [cloudinaryImageUrl, setCloudinaryImageUrl] = useState(null);
+  const [isUploading, setIsUploading] = useState(false);
+
+  const uploadImageToCloudinary = async (file) => {
+    setIsUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
+      formData.append("cloud_name", CLOUDINARY_CLOUD_NAME);
+
+      const response = await fetch(
+        `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`, // Backticks for template literal
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error?.message || "Cloudinary upload failed");
+      }
+
+      const data = await response.json();
+      setCloudinaryImageUrl(data.secure_url);
+      toast.success("Profile image uploaded to Cloudinary!");
+      return data.secure_url;
+    } catch (error) {
+      console.error("Error uploading to Cloudinary:", error);
+      toast.error(`Image upload failed: ${error.message}`); // Backticks for template literal
+      setCloudinaryImageUrl(null);
+      return null;
+    } finally {
+      setIsUploading(false);
+    }
+  };
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setProfileImageFile(file);
+
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setProfileImagePreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+
+      uploadImageToCloudinary(file);
+    } else {
+      setProfileImageFile(null);
+      setProfileImagePreview(null);
+      setCloudinaryImageUrl(null);
+    }
+  };
 
   async function registerDoctor(docsData) {
     const url = "http://localhost:5000/api/doctor/register";
-    const doctorData = docsData;
+
+    const formData = new FormData();
+
+    for (const key in docsData) {
+      if (key === "address" || key === "workingHours") {
+        formData.append(key, JSON.stringify(docsData[key]));
+      } else {
+        formData.append(key, docsData[key]);
+      }
+    }
+
+    if (cloudinaryImageUrl) {
+      formData.append("profileImage", cloudinaryImageUrl);
+    } else if (profileImageFile && !isUploading) {
+      toast.error(
+        "Profile image upload failed. Please try re-selecting the image."
+      );
+      return;
+    } else if (profileImageFile && isUploading) {
+      toast.info("Please wait for the profile image to finish uploading.");
+      return;
+    }
 
     try {
       const response = await fetch(url, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(doctorData),
+        body: formData,
       });
+
       const responseData = await response.json();
+
       if (!response.ok) {
-        throw new Error(responseData.message || "Registration Failed");
+        throw new Error(responseData.message || "Doctor registration failed");
       } else {
-        toast.success("Doctor Registered successfully!");
+        toast.success("Doctor registered successfully!");
         navigate("/login");
       }
     } catch (error) {
-      toast.error(error.message || "An unexpected error occurred");
+      toast.error(
+        error.message || "An unexpected error occurred during registration"
+      );
     }
   }
+
   const onSubmit = (data) => {
+    if (isUploading) {
+      toast.info(
+        "Please wait, the profile image is still uploading to Cloudinary..."
+      );
+      return;
+    }
+
+    if (profileImageFile && !cloudinaryImageUrl) {
+      toast.error(
+        "Please upload a profile image or ensure the upload is complete."
+      );
+      return;
+    }
+
     registerDoctor(data);
   };
 
@@ -65,11 +167,7 @@ const DoctorForm = () => {
       <h2 className="text-2xl text-center font-bold text-gray-800 mb-6">
         Doctor Registration
       </h2>
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="space-y-6"
-        encType="multipart/form-data"
-      >
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         {/* Name */}
         <div className={groupClass}>
           <label htmlFor="name" className={labelClass}>
@@ -351,12 +449,58 @@ const DoctorForm = () => {
           </div>
         </div>
 
+        {/* Profile Image Upload and Preview */}
+        <div className={groupClass}>
+          <label htmlFor="profileImage" className={labelClass}>
+            Profile Image
+          </label>
+          <input
+            type="file"
+            id="profileImage"
+            accept="image/*"
+            className={inputClass}
+            onChange={handleImageChange}
+          />
+          {isUploading && (
+            <p className="text-blue-500 mt-2">
+              Uploading image to Cloudinary...
+            </p>
+          )}
+          {profileImagePreview && (
+            <div className="mt-4">
+              <p className="block text-sm font-medium text-gray-700 mb-2">
+                Image Preview:
+              </p>
+              <img
+                src={profileImagePreview}
+                alt="Profile Preview"
+                className="w-32 h-32 object-cover rounded-full border border-gray-300"
+              />
+            </div>
+          )}
+          {cloudinaryImageUrl && !isUploading && (
+            <p className="text-green-600 text-sm mt-2">
+              Image successfully uploaded to Cloudinary!{" "}
+              <a
+                href={cloudinaryImageUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline"
+              >
+                View Image
+              </a>
+            </p>
+          )}
+        </div>
+
         {/* Submit Button */}
         <button
           type="submit"
-          className="w-full bg-primary text-white py-2 px-4 rounded-md hover:bg-[green] focus:outline-primary transition-colors"
+          className="w-full bg-primary text-white py-2 px-4 rounded-md hover:bg-[green] focus:outline-primary transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          disabled={isUploading}
         >
-          Register Doctor <FaUserLock className="inline-block ml-2" />
+          {isUploading ? "Uploading Image..." : "Register Doctor"}{" "}
+          <FaUserLock className="inline-block ml-2" />
         </button>
       </form>
     </div>
