@@ -3,14 +3,14 @@ import Navbar from "../components/navbar/Navbar";
 import Footer from "../components/Footer/Footer";
 import { Outlet } from "react-router-dom";
 
-const PatientLayout = ({ isLogin, setIsLogin }) => {
+const PatientLayout = () => {
   return (
     <>
       <div
         style={{ minHeight: "100vh", width: "90%", margin: "0 auto" }}
         className="flex flex-col"
       >
-        <Navbar isLogin={isLogin} setIsLogin={setIsLogin} />
+        <Navbar />
         <Outlet />
         <Footer />
       </div>

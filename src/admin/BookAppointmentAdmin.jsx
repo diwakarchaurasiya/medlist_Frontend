@@ -219,8 +219,6 @@ const AppointmentBooking = () => {
         amount: selectedDoctor.appointmentFees,
         appointmentDay: getDayNameFromIndex(selectedDayIndex), // ✅ FIXED
       };
-      console.log("Booking appointment with data:", appointmentData);
-
       try {
         const response = await fetch(
           "http://localhost:5000/api/appointment/create",

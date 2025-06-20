@@ -57,37 +57,6 @@ const About = () => {
 
   return (
     <div>
-      {/* Features Section */}
-      <div className="bg-gray-100 py-16">
-        <div className="max-w-screen-lg mx-auto text-center">
-          <h2 className="text-3xl font-bold text-primary mb-4">
-            Why We Are Better Than Others
-          </h2>
-          <p className="text-gray-600 mb-12">
-            Feed everything for a sure guarantee and you will be happy and safe
-          </p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {featuresData.map((feature) => (
-              <div
-                key={feature.id}
-                className="bg-white shadow-none rounded-md p-6 text-center  border border-primary  transition duration-300 flex flex-col justify-center items-center "
-              >
-                <div className="mb-4 text-center">{feature.icon}</div>
-                <h3 className="text-xl font-semibold text-primary mb-2">
-                  {feature.title}
-                </h3>
-                <p className="text-gray-600 text-md">{feature.description}</p>
-                <span
-                  href="#"
-                  className="text-primary font-semibold mt-4 inline-block"
-                >
-                  Learn more →
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
       <h1 className="text-4xl text-center font-bold my-8 text-primary">
         About Us
       </h1>
@@ -133,6 +102,37 @@ const About = () => {
             gap between patients and healthcare providers, ensuring timely and
             efficient care for all.
           </p>
+        </div>
+      </div>
+      {/* Features Section */}
+      <div className=" py-16">
+        <div className="max-w-screen-lg mx-auto text-center">
+          <h2 className="text-3xl font-bold text-primary mb-4">
+            Why We Are Better Than Others
+          </h2>
+          <p className="text-gray-600 mb-12">
+            Feed everything for a sure guarantee and you will be happy and safe
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            {featuresData.map((feature) => (
+              <div
+                key={feature.id}
+                className="bg-white shadow-none rounded-md p-6 text-center  border border-primary  transition duration-300 flex flex-col justify-center items-center "
+              >
+                <div className="mb-4 text-center">{feature.icon}</div>
+                <h3 className="text-xl font-semibold text-primary mb-2">
+                  {feature.title}
+                </h3>
+                <p className="text-gray-600 text-md">{feature.description}</p>
+                <span
+                  href="#"
+                  className="text-primary font-semibold mt-4 inline-block"
+                >
+                  Learn more →
+                </span>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>

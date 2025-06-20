@@ -12,6 +12,8 @@ const DoctorDetails = () => {
   const [docInfo, setDocInfo] = useState(null); // Default to null
   const [isLoading, setIsLoading] = useState(true);
   const [showAppointment, setShowAppointment] = useState(false);
+  const user = localStorage.getItem("user");
+  const patientId = user ? JSON.parse(user)._id : null;
 
   const fetchDoc = async () => {
     try {
@@ -76,6 +78,7 @@ const DoctorDetails = () => {
               doctorId={docInfo?._id}
               setShowAppointment={setShowAppointment}
               workingHours={docInfo?.workingHours}
+              patientId={patientId}
             />
           ) : (
             <div className="right">

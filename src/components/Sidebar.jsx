@@ -169,10 +169,14 @@ const Sidebar = ({ isExpanded, toggleSidebar, role }) => {
 
   // Dummy logout handler — replace with your actual logout logic
   const handleLogout = () => {
-    // e.g. clear tokens, redirect to login
-    alert("Logged out!");
-  };
+    // Remove only auth-related items
+    localStorage.clear();
 
+    toast.success("Logged out successfully!");
+
+    // Redirect to login
+    navigate("/login");
+  };
   return (
     <div
       className={`bg-white text-black h-screen fixed left-0 top-0 p-4 shadow-lg transition-all duration-300 ease-in-out z-50 ${

@@ -1,7 +1,12 @@
 import React, { useState } from "react";
 import { set } from "react-hook-form";
 import { toast } from "react-toastify";
-const Appointment = ({ setShowAppointment, workingHours, doctorId }) => {
+const Appointment = ({
+  setShowAppointment,
+  workingHours,
+  doctorId,
+  patientId,
+}) => {
   // Define state for selected day and time
   const [selectedIndex, setSelectedIndex] = useState(null);
   const [selectedDate, setSelectedDate] = useState(0);
@@ -50,6 +55,7 @@ const Appointment = ({ setShowAppointment, workingHours, doctorId }) => {
   const handleTimeSelect = (time) => {
     setSelectedTime(time);
   };
+
   const bookingHandle = async () => {
     try {
       let url = "http://localhost:5000/api/appointment/create";
@@ -60,7 +66,7 @@ const Appointment = ({ setShowAppointment, workingHours, doctorId }) => {
         },
         body: JSON.stringify({
           doctorId: doctorId,
-          patientId: "6774123f87ef67ddf16b3447",
+          patientId: patientId,
           appointmentDate: selectedDate,
           appointmentDay: days[selectedIndex].day,
           appointmentTime: selectedTime,
