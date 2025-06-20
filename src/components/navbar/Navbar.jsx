@@ -28,10 +28,13 @@ const Navbar = () => {
   };
 
   return (
-    <div id="navbar" className="bg-white shadow-sm">
+    <div
+      id="navbar"
+      className="sticky top-0 z-50 bg-white shadow-sm border-b border-gray-200"
+    >
       {" "}
       {/* Added shadow for better separation */}
-      <div className="flex items-center justify-between  py-1 px-4 md:px-8 border-b border-gray-200">
+      <div className="flex items-center justify-between px-4 md:px-8">
         {" "}
         {/* Added padding and responsive padding */}
         <div className="logo">
