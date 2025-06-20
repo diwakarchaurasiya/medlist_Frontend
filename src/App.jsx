@@ -114,7 +114,10 @@ function App() {
               <Route path="dashboard" element={<DoctorDashboard />} />
               <Route path="register" element={<DoctorForm />} />{" "}
               {/* Should this be protected for doctor only? or admin only? */}
-              <Route path="appointments" element={<DoctorAppointments />} />
+              <Route
+                path="appointments/view"
+                element={<DoctorAppointments />}
+              />
               <Route path="*" element={<div>Doctor: Page Not Found</div>} />
             </Route>
             {/* ================= ADMIN ROUTES ================= */}
