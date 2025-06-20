@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
-import { useAuth } from "../../utility/AuthContext"; // Import useAuth
 
 const inputClass =
   "w-full pl-10 py-3 border rounded-lg focus:outline-none focus:border-primary";
@@ -13,81 +12,65 @@ const buttonClass =
 const iconClass =
   "absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500";
 
-const Login = () => {
+const Login = ({ setUser }) => {
   const navigate = useNavigate();
-  const { login, isLogin, role } = useAuth(); // Use the useAuth hook
   const [showPassword, setShowPassword] = useState(false);
   const [selectedUser, setSelectedUser] = useState("Patient");
-
+  const [loading, setLoading] = useState(false);
   const {
     register,
     handleSubmit,
     formState: { errors },
+    getValues,
   } = useForm();
 
-  // Redirect if already logged in based on context state
-  useEffect(() => {
-    if (isLogin && role) {
-      if (role === "doctor") {
-        navigate("/doctor/dashboard", { replace: true });
-      } else if (role === "admin") {
-        navigate("/admin/dashboard", { replace: true });
-      } else if (role === "patient") {
-        navigate("/", { replace: true });
-      }
-    }
-  }, [isLogin, role, navigate]); // Depend on isLogin and role from context
-
-  // URLs
-  const urlPatient = "http://localhost:5000/api/patient/login";
-  const urlDoctor = "http://localhost:5000/api/doctor/login";
-  const urlAdmin = "http://localhost:5000/api/admin/login";
-
   const onSubmit = async (data) => {
+    const userType = selectedUser.toLowerCase();
+    setLoading(true);
+
+    const apiEndpoints = {
+      patient: "http://localhost:5000/api/patient/login",
+      doctor: "http://localhost:5000/api/doctor/login",
+      admin: "http://localhost:5000/api/admin/login",
+    };
+
     try {
-      let url = "";
-      let redirectPath = "";
-
-      // Ensure selectedUser matches backend's expected role casing for storage
-      const roleToStore = selectedUser.toLowerCase();
-
-      if (selectedUser === "Patient") {
-        url = urlPatient;
-        redirectPath = "/";
-      } else if (selectedUser === "Doctor") {
-        url = urlDoctor;
-        redirectPath = "/doctor/dashboard";
-      } else if (selectedUser === "Admin") {
-        url = urlAdmin;
-        redirectPath = "/admin/dashboard";
-      }
-
-      const response = await fetch(url, {
+      const response = await fetch(apiEndpoints[userType], {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: data.email,
-          password: data.password,
-        }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: data.email, password: data.password }),
       });
 
-      const responseData = await response.json();
-      console.log("Login Response:", responseData);
+      const dataRecieved = await response.json();
+      const result = dataRecieved?.data;
+      console.log("Login response:", result); // Debugging line to check API response
+      if (!response.ok) throw new Error(result.message || "Login failed");
 
-      if (!response.ok) {
-        throw new Error(responseData.message || "Login failed");
-      }
+      const token = result.token;
+      const user = result.user;
 
-      if (responseData.success) {
-        // Use the login function from AuthContext
-        // Assuming responseData.data contains user info and responseData.token contains the token
-        login(responseData.data?.token, responseData.data?.user, roleToStore); // Pass token, user data, and role
-        navigate(redirectPath, { replace: true }); // Use replace to prevent back button to login
+      localStorage.setItem("user", JSON.stringify({ user, token, userType }));
+      localStorage.setItem(`${userType}_token`, token);
+      setUser({ user, token, userType });
+
+      switch (userType) {
+        case "patient":
+          navigate("/my-profile", { replace: true });
+          break;
+        case "doctor":
+          navigate("/doctor/dashboard", { replace: true });
+          break;
+        case "admin":
+          navigate("/admin/dashboard", { replace: true });
+          break;
+        default:
+          navigate("/", { replace: true });
       }
-    } catch (error) {
-      toast.error(`Login failed: ${error.message}`);
+      toast.success("Login successful!");
+    } catch (err) {
+      toast.error(err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -101,32 +84,27 @@ const Login = () => {
           Select your role and enter credentials
         </p>
 
-        {/* Role Buttons */}
         <div className="grid grid-cols-3 gap-4 mb-4">
-          {["Patient", "Doctor", "Admin"].map((roleOption) => (
+          {["Patient", "Doctor", "Admin"].map((role) => (
             <button
-              key={roleOption}
-              onClick={() => setSelectedUser(roleOption)}
+              key={role}
+              onClick={() => setSelectedUser(role)}
               className={`flex flex-col items-center text-center rounded-md p-4 transition-all ${
-                selectedUser === roleOption
+                selectedUser === role
                   ? "bg-primary text-white"
                   : "bg-[#f0fff4] hover:bg-[#e6ffe1] hover:border-primary"
               }`}
             >
               <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center">
                 <span className="text-4xl">
-                  {roleOption === "Patient"
-                    ? "🤒"
-                    : roleOption === "Doctor"
-                    ? "👨‍⚕️"
-                    : "🛡️"}
+                  {role === "Patient" ? "🤒" : role === "Doctor" ? "👨‍⚕️" : "🛡️"}
                 </span>
               </div>
-              <p className="text-sm font-bold my-2">{roleOption}</p>
+              <p className="text-sm font-bold my-2">{role}</p>
               <p className="text-xs">
-                {roleOption === "Patient"
+                {role === "Patient"
                   ? "Appointment & Pay"
-                  : roleOption === "Doctor"
+                  : role === "Doctor"
                   ? "Schedules & Appointments"
                   : "Full system access"}
               </p>
@@ -134,9 +112,7 @@ const Login = () => {
           ))}
         </div>
 
-        {/* Login Form */}
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          {/* Email */}
           <div>
             <label htmlFor="email" className={labelClass}>
               Email
@@ -162,7 +138,6 @@ const Login = () => {
             )}
           </div>
 
-          {/* Password */}
           <div>
             <label htmlFor="password" className={labelClass}>
               Password
@@ -194,18 +169,22 @@ const Login = () => {
             )}
           </div>
 
-          {/* Submit Button */}
-          <button type="submit" className={`${buttonClass} bg-primary`}>
-            Login
+          <button
+            type="submit"
+            disabled={loading}
+            className={`${buttonClass} ${
+              loading ? "opacity-50 cursor-not-allowed" : ""
+            }`}
+          >
+            {loading ? "Logging in..." : "Login"}
           </button>
         </form>
 
-        {/* Register Link for Patients */}
         {selectedUser === "Patient" ? (
           <p className="text-center text-sm mt-4">
             Don't Have Account?
             <Link
-              to="/Patient/register"
+              to="/patient/register"
               className="text-primary hover:underline ml-1"
             >
               Register Here
@@ -213,7 +192,7 @@ const Login = () => {
           </p>
         ) : (
           <p className="text-center text-sm mt-4">
-            {selectedUser} Can only added by admin.
+            {selectedUser} can only be added by admin.
           </p>
         )}
       </div>

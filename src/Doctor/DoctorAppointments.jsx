@@ -6,7 +6,8 @@ import { toast } from "react-toastify";
 const DoctorsAppointments = () => {
   const [Doctorsappointments, setDoctorsAppointments] = useState([]);
   const user = localStorage.getItem("user");
-  const doctorId = JSON.parse(user)?._id || null;
+  const doctorId = JSON.parse(user)?.user._id || null;
+  console.log("Doctor ID:", doctorId);
 
   useEffect(() => {
     // Fetch Doctorsappointments data from the API

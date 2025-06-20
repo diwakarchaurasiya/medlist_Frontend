@@ -1,14 +1,15 @@
-// components/ProtectedRoute.jsx
+import React from "react";
 import { Navigate } from "react-router-dom";
 
-const ProtectedRoute = ({ element: Element, isLogin, role, allowedRoles }) => {
-    if (!isLogin) return <Navigate to="/login" />;
+const ProtectedRoute = ({ children, userType }) => {
+  const token = localStorage.getItem(`${userType}_token`);
 
-    if (allowedRoles && !allowedRoles.includes(role)) {
-        return <Navigate to="/unauthorized" />;
-    }
+  if (!token) {
+    // Redirect to login if no token is found
+    return <Navigate to="/login" replace />;
+  }
 
-    return <Element />;
+  return children;
 };
 
 export default ProtectedRoute;

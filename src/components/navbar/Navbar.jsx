@@ -3,7 +3,6 @@ import { assets } from "./../../assets/assets_frontend/assets";
 import { Link, useLocation } from "react-router-dom"; // Import useLocation
 import { FaBuffer, FaSignOutAlt, FaUser, FaUserLock } from "react-icons/fa";
 import { LuImagePlus } from "react-icons/lu";
-import { useAuth } from "../../utility/AuthContext"; // Adjust path as needed
 
 import "./navbar.css";
 // import { Lock } from "lucide-react"; // Lock import seems unused, consider removing if not needed.
@@ -12,8 +11,9 @@ import { toast } from "react-toastify";
 const Navbar = () => {
   const [showMenu, setShowMenu] = useState(false); // Renamed for consistency
   const [showDropdown, setShowDropdown] = useState(false); // Renamed for consistency
-  const { isLogin, logout, user } = useAuth();
   const location = useLocation(); // Initialize useLocation hook
+  const [user, setUser] = useState(JSON.parse(localStorage.getItem("user"))); // Get user from localStorage
+  const [isLogin, setIsLogin] = useState(true); // Check if user is logged in
 
   // Close mobile menu or dropdown when route changes
   useEffect(() => {
@@ -136,8 +136,9 @@ const Navbar = () => {
                         <button
                           className="w-full bg-primary text-white my-2 py-2 rounded-md hover:bg-green-600 transition duration-300 flex items-center justify-center gap-2 capitalize" // Improved button styling and centered content
                           onClick={() => {
-                            logout();
+                            localStorage.clear(); // Clear user from localStorage
                             setShowDropdown(false); // Close dropdown after logout
+                            setIsLogin(false); // Update login state
                             toast.success("Logged out successfully!"); // Added toast notification
                           }}
                         >
