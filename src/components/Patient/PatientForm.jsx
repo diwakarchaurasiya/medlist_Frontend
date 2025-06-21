@@ -1,8 +1,9 @@
 import React from "react";
 import { useForm } from "react-hook-form";
-import { toast } from "react-toastify";
-import { Link, useNavigate } from "react-router-dom";
 import { FaUserLock } from "react-icons/fa";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+
 const PatientForm = () => {
   toast;
   const {
@@ -13,7 +14,7 @@ const PatientForm = () => {
   const navigate = useNavigate();
   // Function to handle patient registration
   async function registerPatient(patientData) {
-    const url = "http://localhost:5000/api/patient/register";
+    const url = "https://medlist-backend.onrender.com/api/patient/register";
     try {
       const response = await fetch(url, {
         method: "POST",

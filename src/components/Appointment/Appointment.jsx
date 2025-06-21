@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { set } from "react-hook-form";
 import { toast } from "react-toastify";
+
 const Appointment = ({
   setShowAppointment,
   workingHours,
@@ -58,7 +59,7 @@ const Appointment = ({
 
   const bookingHandle = async () => {
     try {
-      let url = "http://localhost:5000/api/appointment/create";
+      let url = "https://medlist-backend.onrender.com/api/appointment/create";
       let response = await fetch(url, {
         method: "POST",
         headers: {

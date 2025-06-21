@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 const inputClass =
@@ -29,9 +29,9 @@ const Login = ({ setUser }) => {
     setLoading(true);
 
     const apiEndpoints = {
-      patient: "http://localhost:5000/api/patient/login",
-      doctor: "http://localhost:5000/api/doctor/login",
-      admin: "http://localhost:5000/api/admin/login",
+      patient: "https://medlist-backend.onrender.com/api/patient/login",
+      doctor: "https://medlist-backend.onrender.com/api/doctor/login",
+      admin: "https://medlist-backend.onrender.com/api/admin/login",
     };
 
     try {
@@ -43,8 +43,7 @@ const Login = ({ setUser }) => {
 
       const dataRecieved = await response.json();
       const result = dataRecieved?.data;
-      console.log("Login response:", result); // Debugging line to check API response
-      if (!response.ok) throw new Error(result.message || "Login failed");
+      if (!response.ok) throw new Error(result || "Login failed Try Again");
 
       const token = result.token;
       const user = result.user;

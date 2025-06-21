@@ -45,7 +45,7 @@ const Appointments = () => {
 
   // Function to handle appointment deletion
   //   const handleDelete = (id) => {
-  //     fetchFromApi(`http://localhost:5000/api/appointment/${id}`, "delete")
+  //     fetchFromApi(`https://medlist-backend.onrender.com/api/appointment/${id}`, "delete")
   //       .then(() => {
   //         toast.success("Appointment deleted successfully");
   //         // Remove the appointment from the local state

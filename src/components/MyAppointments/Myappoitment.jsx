@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { toast } from "react-toastify";
 import fetchFromApi from "../../utility/fetchFromApi";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const MyAppointment = () => {
   const [appointments, setAppointments] = useState([]);
@@ -9,7 +9,7 @@ const MyAppointment = () => {
   const [fetchError, setFetchError] = useState(null);
 
   const user = localStorage.getItem("user");
-  const patientId = user ? JSON.parse(user)._id : null;
+  const patientId = user ? JSON.parse(user)?.user._id : null;
 
   useEffect(() => {
     if (!patientId) {
@@ -19,7 +19,7 @@ const MyAppointment = () => {
     }
 
     fetchFromApi(
-      `http://localhost:5000/api/appointment/patient/${patientId}`,
+      `https://medlist-backend.onrender.com/api/appointment/patient/${patientId}`,
       "GET"
     )
       .then((data) => {

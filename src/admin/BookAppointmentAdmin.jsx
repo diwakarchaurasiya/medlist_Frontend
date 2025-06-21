@@ -1,4 +1,6 @@
-import React, { useState, useEffect, useRef } from "react";
+import DoctorManagementSkeleton from "../components/LoadingSkeleton/DoctorManagementSkeleton";
+import React, { useEffect, useRef, useState } from "react";
+
 import {
   Search,
   Clock,
@@ -9,7 +11,6 @@ import {
   CheckCircle,
   XCircle,
 } from "lucide-react"; // Assuming you have Lucide React installed
-import DoctorManagementSkeleton from "../components/LoadingSkeleton/DoctorManagementSkeleton";
 
 const AppointmentBooking = () => {
   // State
@@ -221,7 +222,7 @@ const AppointmentBooking = () => {
       };
       try {
         const response = await fetch(
-          "http://localhost:5000/api/appointment/create",
+          "https://medlist-backend.onrender.com/api/appointment/create",
           {
             method: "POST",
             headers: {

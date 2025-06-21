@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import fetchFromApi from "../utility/fetchFromApi";
-import { toast } from "react-toastify";
 import { FaStethoscope, FaTrashAlt } from "react-icons/fa";
+import { toast } from "react-toastify";
 
 const Doctors = () => {
   const [doctors, setDoctors] = useState([]);
@@ -22,7 +22,10 @@ const Doctors = () => {
     setDoctors(doctors.filter((doctor) => doctor.id !== id));
 
     // Call API to delete the doctor record
-    fetchFromApi(`http://localhost:5000/api/doctor/${id}`, "delete")
+    fetchFromApi(
+      `https://medlist-backend.onrender.com/api/doctor/${id}`,
+      "delete"
+    )
       .then(() => toast.success("Doctor deleted successfully"))
       .catch((error) => {
         toast.error("Error deleting doctor:", error);
