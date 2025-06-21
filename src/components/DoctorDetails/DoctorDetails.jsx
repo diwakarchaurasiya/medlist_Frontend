@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { assets } from "./../../assets/assets_frontend/assets";
 import Appointment from "../Appointment/Appointment";
 import DocsCard from "../docsCard/DocsCard";
+import React, { useEffect, useState } from "react";
 import Recommendation from "./Recommendation";
 import RecommendationLoading from "../LoadingSkeleton/RecommendationLoading";
 import { FaCalendarPlus, FaRupeeSign, FaUserClock } from "react-icons/fa";
+import { useParams } from "react-router-dom";
+import { assets } from "./../../assets/assets_frontend/assets";
 
 const DoctorDetails = () => {
   const { docName } = useParams();
@@ -13,7 +13,7 @@ const DoctorDetails = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [showAppointment, setShowAppointment] = useState(false);
   const user = localStorage.getItem("user");
-  const patientId = user ? JSON.parse(user)._id : null;
+  const patientId = user ? JSON.parse(user)?.user._id : null;
 
   const fetchDoc = async () => {
     try {

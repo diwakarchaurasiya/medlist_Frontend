@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
-import { UserPlus, Search, Edit, Trash, X, Eye, Clock } from "lucide-react";
+import "react-toastify/dist/ReactToastify.css";
+import DoctorManagementSkeleton from "../components/LoadingSkeleton/DoctorManagementSkeleton";
+import Modal from "react-modal";
+import React, { useEffect, useState } from "react";
+import { Clock, Edit, Eye, Search, Trash, UserPlus, X } from "lucide-react";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import Modal from "react-modal";
-import DoctorManagementSkeleton from "../components/LoadingSkeleton/DoctorManagementSkeleton";
 
 Modal.setAppElement("#root");
 
@@ -66,6 +66,7 @@ const Doctors = () => {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
+          authorization: `Bearer ${localStorage.getItem("admin_token")}`,
         },
         body: JSON.stringify(selectedDoctor),
       }
@@ -538,18 +539,6 @@ const Doctors = () => {
                     onChange={handleInputChange}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                     required
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Profile Image URL
-                  </label>
-                  <input
-                    type="text"
-                    name="profileImage"
-                    value={selectedDoctor.profileImage || ""}
-                    onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
               </div>

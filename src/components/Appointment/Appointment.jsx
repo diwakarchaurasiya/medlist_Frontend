@@ -64,6 +64,7 @@ const Appointment = ({
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          authorization: `Bearer ${localStorage.getItem("patient_token")}`,
         },
         body: JSON.stringify({
           doctorId: doctorId,
