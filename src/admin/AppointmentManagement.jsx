@@ -11,6 +11,7 @@ import {
   ChevronDown,
   Repeat,
   Trash2,
+  FileText, // Import the FileText icon for CSV export
 } from "lucide-react";
 import DoctorManagementSkeleton from "../components/LoadingSkeleton/DoctorManagementSkeleton";
 
@@ -55,7 +56,7 @@ const AppointmentManagementPage = () => {
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState("new"); // 'new' or 'completed'
   const [searchTerm, setSearchTerm] = useState("");
-  const [filterDate, setFilterDate] = useState(""); // Format: YYYY-MM-DD for input type="date"
+  const [filterDate, setFilterDate] = useState(""); // Format:YYYY-MM-DD for input type="date"
   const [sortConfig, setSortConfig] = useState({
     key: null,
     direction: "ascending",
@@ -140,6 +141,7 @@ const AppointmentManagementPage = () => {
         if (isNaN(appDate.getTime())) return false; // Skip if date is unparseable
 
         // Compare the formatted date from API with the filterDate (both YYYY-MM-DD)
+        // For filtering, we still need YYYY-MM-DD to match the input type="date"
         return format(appDate, "yyyy-MM-dd") === filterDate;
       });
     }
@@ -172,7 +174,7 @@ const AppointmentManagementPage = () => {
             break;
           case "patientName":
             aValue = getPatientDisplayName(a.patientId);
-            bValue = getDoctorDisplayName(b.patientId); // Corrected to use getPatientDisplayName for 'b'
+            bValue = getPatientDisplayName(b.patientId); // Corrected to use getPatientDisplayName for 'b'
             break;
           case "patientAge":
             aValue = a.patientId?.age || 0; // Default to 0 for missing age for sorting
@@ -261,6 +263,48 @@ const AppointmentManagementPage = () => {
     }
   };
 
+  const handleExportCsv = () => {
+    const headers = [
+      "Appointment Time",
+      "Appointment Date",
+      "Patient Name",
+      "Patient Age",
+      "Doctor Name",
+      "Status",
+    ];
+
+    const data = filteredAndSortedAppointments.map((appointment) => {
+      const appointmentDate = appointment.appointmentDate
+        ? format(parseISO(appointment.appointmentDate), "dd-MM-yyyy")
+        : "N/A"; // Format for CSV
+      const status =
+        isPast(parseISO(appointment.appointmentDate)) &&
+        !isToday(parseISO(appointment.appointmentDate))
+          ? "Completed"
+          : "New";
+      return [
+        appointment.appointmentTime || "N/A",
+        appointmentDate, // Use the formatted date here
+        getPatientDisplayName(appointment.patientId),
+        getPatientAge(appointment),
+        getDoctorDisplayName(appointment.doctorId),
+        status,
+      ];
+    });
+
+    const csvContent =
+      "data:text/csv;charset=utf-8," +
+      [headers.join(","), ...data.map((row) => row.join(","))].join("\n");
+
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", "appointments.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   // --- Conditional Rendering for Loading/Error States ---
   if (loading) {
     return <DoctorManagementSkeleton />;
@@ -287,12 +331,23 @@ const AppointmentManagementPage = () => {
         <h1 className="text-2xl font-bold text-gray-800">
           Appointment Management
         </h1>
-        <Link to="/admin/appointments/book" className="no-underline">
-          <button className="flex items-center px-5 py-2 bg-primary text-white rounded-md hover:bg-secondary transition-colors duration-200 shadow-md">
-            <Plus className="w-5 h-5 mr-2" />
-            New Appointment
+        <div className="flex space-x-3">
+          {" "}
+          {/* Use a div to group buttons */}
+          <button
+            onClick={handleExportCsv}
+            className="flex items-center px-5 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors duration-200 shadow-md"
+          >
+            <FileText className="w-5 h-5 mr-2" />
+            Export to CSV
           </button>
-        </Link>
+          <Link to="/admin/appointments/book" className="no-underline">
+            <button className="flex items-center px-5 py-2 bg-primary text-white rounded-md hover:bg-secondary transition-colors duration-200 shadow-md">
+              <Plus className="w-5 h-5 mr-2" />
+              New Appointment
+            </button>
+          </Link>
+        </div>
       </div>
 
       {/* Tabs for New/Completed Appointments */}
@@ -303,16 +358,16 @@ const AppointmentManagementPage = () => {
               setActiveTab("new");
               setCurrentPage(1);
             }}
-            className={`
+            className={` capitalize
               ${
                 activeTab === "new"
                   ? "border-primary text-primary font-semibold"
                   : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
               }
-              whitespace-nowrap py-3 px-1 border-b-2 text-base font-medium transition-colors duration-200 focus:outline-none
+              whitespace-nowrap py-3 px-1 border-b-2 text-base font-medium transition-colors duration-200 focus:outline-none 
             `}
           >
-            NEW APPOINTMENTS
+            New Appointments
           </button>
           <button
             onClick={() => {
@@ -325,10 +380,10 @@ const AppointmentManagementPage = () => {
                   ? "border-primary text-primary font-semibold"
                   : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
               }
-              whitespace-nowrap py-3 px-1 border-b-2 text-base font-medium transition-colors duration-200 focus:outline-none
+              whitespace-nowrap py-3 px-1 border-b-2 text-base font-medium transition-colors duration-200 focus:outline-none 
             `}
           >
-            COMPLETED APPOINTMENTS
+            Completed Appointments
           </button>
         </nav>
       </div>
@@ -438,8 +493,13 @@ const AppointmentManagementPage = () => {
                     {/* Assumed directly available */}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {/* Safely format date for display */}
-                    {appointment.appointmentDate || "N/A"}
+                    {/* Safely format date for display in DD-MM-YYYY */}
+                    {appointment.appointmentDate
+                      ? format(
+                          parseISO(appointment.appointmentDate),
+                          "dd-MM-yyyy"
+                        )
+                      : "N/A"}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">
@@ -498,7 +558,7 @@ const AppointmentManagementPage = () => {
               <tr>
                 <td
                   colSpan="6"
-                  className="px-6  text-center text-gray-500 py-8"
+                  className="px-6  text-center text-gray-500 py-8"
                 >
                   No appointments found for this view.
                 </td>

@@ -2,7 +2,16 @@ import "react-toastify/dist/ReactToastify.css";
 import DoctorManagementSkeleton from "../components/LoadingSkeleton/DoctorManagementSkeleton";
 import Modal from "react-modal";
 import React, { useEffect, useState } from "react";
-import { Clock, Edit, Eye, Search, Trash, UserPlus, X } from "lucide-react";
+import {
+  Clock,
+  Edit,
+  Eye,
+  Search,
+  Trash,
+  UserPlus,
+  X,
+  Download,
+} from "lucide-react"; // Import Download icon
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 
@@ -137,6 +146,58 @@ const Doctors = () => {
     return matchesSearch && matchesFilter;
   });
 
+  // Function to export filtered doctors to CSV
+  const exportToCsv = () => {
+    if (filteredDoctors.length === 0) {
+      toast.info("No doctors to export.");
+      return;
+    }
+
+    const headers = [
+      "Name",
+      "Specialization",
+      "Experience",
+      "License Number",
+      "Contact Number",
+      "Email",
+      "Appointment Fees",
+      "Working Hours Start",
+      "Working Hours End",
+      "Address Line 1",
+      "Address Line 2",
+      "Pincode",
+    ];
+
+    const rows = filteredDoctors.map((doctor) => [
+      doctor.name,
+      doctor.specialization,
+      doctor.experience,
+      doctor.licenseNumber,
+      doctor.contactNumber,
+      doctor.email,
+      doctor.appointmentFees,
+      doctor.workingHours?.start || "",
+      doctor.workingHours?.end || "",
+      doctor.address?.line1 || "",
+      doctor.address?.line2 || "",
+      doctor.address?.pincode || "",
+    ]);
+
+    let csvContent = headers.join(",") + "\n";
+    rows.forEach((row) => {
+      csvContent += row.map((field) => `"${field}"`).join(",") + "\n";
+    });
+
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.setAttribute("download", "doctors.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    toast.success("Doctors data exported to CSV!");
+  };
+
   if (loading) {
     return <DoctorManagementSkeleton />;
   }
@@ -174,11 +235,19 @@ const Doctors = () => {
           <UserPlus className="h-8 w-8 text-primary" />
           <h1 className="text-2xl font-bold text-gray-800">Doctors</h1>
         </div>
-        <Link to="/admin/doctors/add">
-          <button className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-secondary flex items-center gap-2">
-            <UserPlus className="h-5 w-5" /> Add Doctor
+        <div className="flex gap-2">
+          <button
+            onClick={exportToCsv}
+            className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center gap-2"
+          >
+            <Download className="h-5 w-5" /> Export to CSV
           </button>
-        </Link>
+          <Link to="/admin/doctors/add">
+            <button className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-secondary flex items-center gap-2">
+              <UserPlus className="h-5 w-5" /> Add Doctor
+            </button>
+          </Link>
+        </div>
       </div>
 
       <div className="bg-white rounded-lg shadow-sm">

@@ -81,7 +81,7 @@ const Sidebar = ({ isExpanded, toggleSidebar, role }) => {
           icon: <CalendarCheck2 className="w-5 h-5" />,
         },
         {
-          name: "Manage Appointments",
+          name: "Appointments",
           path: "/admin/appointments/manage",
           icon: <CalendarClock className="w-5 h-5" />,
         },
@@ -93,17 +93,17 @@ const Sidebar = ({ isExpanded, toggleSidebar, role }) => {
       subMenu: [
         {
           name: "Patient Reports",
-          path: "/admin/reports/patients",
+          path: "/admin/patients/manage",
           icon: <FileText className="w-5 h-5" />,
         },
         {
           name: "Doctor Reports",
-          path: "/admin/reports/doctors",
+          path: "/admin/doctors/manage",
           icon: <Stethoscope className="w-5 h-5" />,
         },
         {
-          name: "Appointment Reports",
-          path: "/admin/reports/appointments",
+          name: " Appoitments",
+          path: "/admin/appointments/manage",
           icon: <CalendarClock className="w-5 h-5" />,
         },
       ],

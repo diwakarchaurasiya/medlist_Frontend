@@ -1,12 +1,22 @@
 import React, { useState, useEffect } from "react";
-import { UserPlus, Search, Edit, Trash, X, Eye } from "lucide-react";
+import {
+  UserPlus,
+  Search,
+  Edit,
+  Trash,
+  X,
+  Eye,
+  FileText,
+  ChevronUp,
+  ChevronDown,
+} from "lucide-react"; // Added Chevron icons for future sorting if needed
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Modal from "react-modal";
 import DoctorManagementSkeleton from "../components/LoadingSkeleton/DoctorManagementSkeleton";
 
-Modal.setAppElement("#root");
+Modal.setAppElement("#root"); // Important for accessibility with react-modal
 
 const Patients = () => {
   const [patients, setPatients] = useState([]);
@@ -16,6 +26,10 @@ const Patients = () => {
   const [selectedPatient, setSelectedPatient] = useState(null);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("all"); // "all", "Male", "Female", etc.
+
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(1);
+  const [patientsPerPage] = useState(10); // Number of patients to display per page
 
   useEffect(() => {
     fetch("https://medlist-backend.onrender.com/api/patient")
@@ -28,6 +42,7 @@ const Patients = () => {
         console.error(err);
         setPatients([]);
         setLoading(false);
+        toast.error("Failed to fetch patients.");
       });
   }, []);
 
@@ -50,6 +65,7 @@ const Patients = () => {
           if (res.ok) {
             toast.success("Patient deleted successfully");
             setPatients((prev) => prev.filter((patient) => patient._id !== id));
+            // No need to reset current page here, as filteredPatients will auto-adjust
           } else {
             toast.error("Failed to delete patient");
           }
@@ -104,17 +120,7 @@ const Patients = () => {
     }));
   };
 
-  const handleAddressChange = (e) => {
-    const { name, value } = e.target;
-    setSelectedPatient((prev) => ({
-      ...prev,
-      address: {
-        ...prev.address,
-        [name]: value,
-      },
-    }));
-  };
-
+  // Filter patients based on search term and gender filter
   const filteredPatients = patients.filter((patient) => {
     const matchesSearch = patient.name
       .toLowerCase()
@@ -123,6 +129,65 @@ const Patients = () => {
       filter === "all" || patient.gender.toLowerCase() === filter.toLowerCase();
     return matchesSearch && matchesFilter;
   });
+
+  // Calculate for pagination
+  const indexOfLastPatient = currentPage * patientsPerPage;
+  const indexOfFirstPatient = indexOfLastPatient - patientsPerPage;
+  const currentPatientsPaginated = filteredPatients.slice(
+    indexOfFirstPatient,
+    indexOfLastPatient
+  );
+  const totalPages = Math.ceil(filteredPatients.length / patientsPerPage);
+
+  // Change page
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+  // --- New function for CSV export ---
+  const handleExportCsv = () => {
+    const headers = [
+      "Name",
+      "Gender",
+      "Age",
+      "Date of Birth",
+      "Contact Number",
+      "Email",
+      "Address",
+      "Emergency Contact",
+      "Medical History",
+    ];
+
+    const data = filteredPatients.map((patient) => [
+      // Double quotes around values to handle commas within fields
+      `"${patient.name}"`,
+      `"${patient.gender}"`,
+      patient.age,
+      patient.dateOfBirth
+        ? new Date(patient.dateOfBirth).toLocaleDateString("en-GB") // Format as DD/MM/YYYY
+        : "N/A",
+      `"${patient.contactNumber}"`,
+      `"${patient.email}"`,
+      `"${patient.address || "N/A"}"`, // Ensure address is handled and quoted
+      `"${patient.emergencyContact || "N/A"}"`,
+      `"${patient.medicalHistory || "None"}"`,
+    ]);
+
+    // Join rows with comma and then each row with newline
+    const csvContent =
+      "data:text/csv;charset=utf-8," +
+      [
+        headers.map((h) => `"${h}"`).join(","), // Quote headers too
+        ...data.map((row) => row.join(",")),
+      ].join("\n");
+
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", "patients.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    toast.success("Patients data exported to CSV!");
+  };
 
   if (loading) {
     return <DoctorManagementSkeleton />;
@@ -159,11 +224,21 @@ const Patients = () => {
           <UserPlus className="h-8 w-8 text-primary" />
           <h1 className="text-2xl font-bold text-gray-800">Patients</h1>
         </div>
-        <Link to="/admin/patients/add">
-          <button className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-secondary flex items-center gap-2">
-            <UserPlus className="h-5 w-5" /> Add Patient
+        <div className="flex space-x-3">
+          {" "}
+          {/* Group buttons */}
+          <button
+            onClick={handleExportCsv}
+            className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center gap-2 transition-colors duration-200"
+          >
+            <FileText className="h-5 w-5" /> Export CSV
           </button>
-        </Link>
+          <Link to="/admin/patients/add">
+            <button className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-secondary flex items-center gap-2">
+              <UserPlus className="h-5 w-5" /> Add Patient
+            </button>
+          </Link>
+        </div>
       </div>
 
       <div className="bg-white rounded-lg shadow-sm">
@@ -175,7 +250,10 @@ const Patients = () => {
               placeholder="Search patients..."
               className="flex-1 border-none outline-none text-sm text-gray-800 placeholder-gray-400"
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setCurrentPage(1); // Reset to first page on search
+              }}
             />
           </div>
           <div className="flex items-center gap-2">
@@ -183,7 +261,10 @@ const Patients = () => {
             <select
               className="border rounded px-2 py-1 text-sm"
               value={filter}
-              onChange={(e) => setFilter(e.target.value)}
+              onChange={(e) => {
+                setFilter(e.target.value);
+                setCurrentPage(1); // Reset to first page on filter change
+              }}
             >
               <option value="all">All Genders</option>
               {genders.map((gender) => (
@@ -217,8 +298,8 @@ const Patients = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
-              {filteredPatients.length > 0 ? (
-                filteredPatients.map((patient) => (
+              {currentPatientsPaginated.length > 0 ? (
+                currentPatientsPaginated.map((patient) => (
                   <tr key={patient._id}>
                     <td className="px-4 py-3 text-sm text-gray-800">
                       <div className="flex items-center gap-2">
@@ -280,6 +361,65 @@ const Patients = () => {
             </tbody>
           </table>
         </div>
+
+        {/* Pagination Controls */}
+        {totalPages > 1 && (
+          <nav
+            className="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6 rounded-b-lg"
+            aria-label="Pagination"
+          >
+            <div className="hidden sm:block">
+              <p className="text-sm text-gray-700">
+                Showing{" "}
+                <span className="font-medium">{indexOfFirstPatient + 1}</span>{" "}
+                to{" "}
+                <span className="font-medium">
+                  {Math.min(indexOfLastPatient, filteredPatients.length)}
+                </span>{" "}
+                of{" "}
+                <span className="font-medium">{filteredPatients.length}</span>{" "}
+                results
+              </p>
+            </div>
+            <div className="flex-1 flex justify-between sm:justify-end">
+              <button
+                onClick={() => paginate(currentPage - 1)}
+                disabled={currentPage === 1}
+                className="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                Previous
+              </button>
+              <div className="ml-3 flex space-x-1">
+                {/* Render pagination buttons */}
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                  (pageNumber) => (
+                    <button
+                      key={pageNumber}
+                      onClick={() => paginate(pageNumber)}
+                      className={`
+                        relative inline-flex items-center px-4 py-2 border text-sm font-medium rounded-md
+                        ${
+                          pageNumber === currentPage
+                            ? "z-10 bg-primary text-white border-primary shadow-sm"
+                            : "bg-white border-gray-300 text-gray-700 hover:bg-gray-50"
+                        } transition-colors
+                      `}
+                    >
+                      {pageNumber}
+                    </button>
+                  )
+                )}
+              </div>
+              <button
+                onClick={() => paginate(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                Next
+              </button>
+            </div>
+          </nav>
+        )}
       </div>
 
       {/* View Patient Details Modal */}
@@ -342,7 +482,7 @@ const Patients = () => {
                       {selectedPatient.dateOfBirth
                         ? new Date(
                             selectedPatient.dateOfBirth
-                          ).toLocaleDateString()
+                          ).toLocaleDateString("en-GB") // Formatted as DD/MM/YYYY
                         : "N/A"}
                     </p>
                   </div>
@@ -375,7 +515,7 @@ const Patients = () => {
               <div>
                 <p className="text-sm font-medium text-gray-500">Address</p>
                 <p className="text-sm text-gray-800">
-                  {selectedPatient.address}
+                  {selectedPatient.address || "N/A"}
                 </p>
               </div>
               <div>
