@@ -515,7 +515,7 @@ const AppointmentManagementPage = () => {
                         </div>
                       )}
                       <div className="ml-4">
-                        <div className="text-sm font-medium text-gray-900">
+                        <div className="text-sm font-medium text-gray-900 capitalize">
                           {getPatientDisplayName(appointment.patientId)}
                         </div>
                       </div>

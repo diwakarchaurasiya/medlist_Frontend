@@ -14,6 +14,8 @@ const Profile = () => {
 
   useEffect(() => {
     const stored = localStorage.getItem("user");
+    // const patientToken = localStorage.getItem("patient_token");
+    // console.log("Stored user data:", stored);
     if (stored) {
       try {
         const parsed = JSON.parse(stored);
@@ -61,18 +63,21 @@ const Profile = () => {
   ];
 
   return (
-    <div className="min-h-screen text-black bg-gray-100">
+    <div className="min-h-screen text-black ">
       <div className="max-w-screen-md mx-auto px-6 py-10">
         {/* Profile Header */}
         <div className="bg-white shadow-md rounded-lg p-6 flex items-center">
           <img
-            src={data.profileImage}
+            src={
+              data.profileImage ||
+              "https://cdn-icons-png.flaticon.com/512/7162/7162728.png"
+            }
             alt="Profile"
             className="w-20 h-20 rounded-full object-cover"
           />
           <div className="ml-6">
             <h1 className="text-2xl font-bold text-primary capitalize ">
-              {data.name}
+              {data.name || "Not Found"}
             </h1>
             <p className="text-sm capitalize">{data.role}</p>
             <p className="text-sm">{data.address}</p>

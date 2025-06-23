@@ -13,7 +13,9 @@ const Navbar = () => {
   const [showDropdown, setShowDropdown] = useState(false); // Renamed for consistency
   const location = useLocation(); // Initialize useLocation hook
   const [user, setUser] = useState(JSON.parse(localStorage.getItem("user"))); // Get user from localStorage
-  const [isLogin, setIsLogin] = useState(false); // Check if user is logged in
+  const [isLogin, setIsLogin] = useState(
+    localStorage.getItem("patient_token") ? true : false
+  ); // Check if user is logged in
 
   // Close mobile menu or dropdown when route changes
   useEffect(() => {

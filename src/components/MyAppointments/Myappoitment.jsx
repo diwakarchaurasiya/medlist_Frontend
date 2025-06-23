@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import fetchFromApi from "../../utility/fetchFromApi";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
+import MyAppointmentsSkeleton from "../LoadingSkeleton/MyAppointmentLoading";
 
 const MyAppointment = () => {
   const [appointments, setAppointments] = useState([]);
@@ -36,11 +37,7 @@ const MyAppointment = () => {
   const notify = () => toast.info("This feature is coming soon!");
 
   if (loading) {
-    return (
-      <div className="min-h-[200px] flex justify-center items-center text-gray-600">
-        Loading your appointments...
-      </div>
-    );
+    return <MyAppointmentsSkeleton />;
   }
 
   if (fetchError) {
@@ -76,7 +73,10 @@ const MyAppointment = () => {
   }
 
   return (
-    <div className="my-10 px-4">
+    <div className=" px-4">
+      <h1 className="text-2xl font-bold text-gray-800 my-6 text-center">
+        My Appointments
+      </h1>
       {appointments.map((appointment, index) => (
         <div
           className="bg-white p-6 rounded-md shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between mb-6"

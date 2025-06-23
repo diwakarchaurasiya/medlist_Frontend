@@ -40,6 +40,7 @@ import PatientLayout from "./LAYOUTS/PatientLayout";
 import DoctorLayout from "./LAYOUTS/DoctorLayout";
 import AdminLayout from "./LAYOUTS/AdminLayout";
 import ProtectedRoute from "./utility/ProtectedRoute";
+import PaymentManagementPage from "./admin/PaymentManagement";
 
 function App() {
   const [user, setUser] = useState({});
@@ -125,6 +126,7 @@ function App() {
             <Route path="patients/add" element={<PatientForm />} />
             <Route path="doctors/manage" element={<Doctors />} />
             <Route path="patients/manage" element={<Patients />} />
+            <Route path="fees" element={<PaymentManagementPage />} />
             <Route path="profile" element={<AdminProfile />} />
             <Route
               path="appointments/manage"

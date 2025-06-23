@@ -6,7 +6,7 @@ const DoctorNavbar = ({ doctorName = "Doctor", toggleSidebar }) => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    localStorage.removeItem("user");
+    localStorage.clear();
     navigate("/login");
   };
 
