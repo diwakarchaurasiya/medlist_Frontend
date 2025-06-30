@@ -7,7 +7,7 @@ const MyAppointmentsSkeleton = () => {
       {[1, 2, 3].map((_, idx) => (
         <div
           key={idx}
-          className="w-full rounded-md border border-gray-200 shadow animate-pulse p-4 flex gap-4"
+          className="w-full rounded-md border border-gray-200 shadow animate-pulse py-8 px-4 flex gap-4"
         >
           {/* Doctor Image */}
           <div className="w-[100px] h-[100px] sm:w-[120px] sm:h-[120px] bg-gray-300 rounded-full"></div>

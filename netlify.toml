@@ -1,10 +1,12 @@
 [build]
-  command = "npm run build"  # Change this to your actual build command
-  publish = "dist"  # Adjust for your framework (e.g., "build" for React, "public" for Gatsby)
+  command = "npm run build"      # Your build command
+  publish = "dist"               # "dist" for Vite, "build" for CRA
   functions = "netlify/functions"
 
 [build.environment]
-  NODE_VERSION = "18"  # Change this to the required Node.js version
+  NODE_VERSION = "18"
 
 [cache]
-  paths = ["node_modules/.cache", ".next/cache"]  # Adjust based on your framework
+  paths = [
+    "node_modules/.cache"        # For tools like Vite
+  ]
