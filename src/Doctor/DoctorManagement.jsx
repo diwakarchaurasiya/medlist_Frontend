@@ -54,6 +54,10 @@ const Doctors = () => {
     if (window.confirm("Are you sure you want to delete this doctor?")) {
       fetch(`https://medlist-backend.onrender.com/api/doctor/${id}`, {
         method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          authorization: `Bearer ${localStorage.getItem("admin_token")}`,
+        },
       })
         .then((res) => {
           if (res.ok) {

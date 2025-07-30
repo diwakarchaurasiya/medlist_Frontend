@@ -115,7 +115,6 @@ const DoctorForm = () => {
         throw new Error(responseData.message || "Doctor registration failed");
       } else {
         toast.success("Doctor registered successfully!");
-        navigate("/login");
       }
     } catch (error) {
       toast.error(

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -12,6 +12,22 @@ const buttonClass =
 const iconClass =
   "absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500";
 
+// Define demo credentials for each user type
+const demoCredentials = {
+  Patient: {
+    email: "newraman123@gmail.com", // Replace with your actual demo patient email
+    password: "qwertyuiop", // Replace with your actual demo patient password
+  },
+  Doctor: {
+    email: "mohankumar123@gmail.com", // Replace with your actual demo doctor email
+    password: "Mohan123", // Replace with your actual demo doctor password
+  },
+  Admin: {
+    email: "admindiwakar@gmail.com", // Replace with your actual demo admin email
+    password: "qwertyuiop", // Replace with your actual demo admin password
+  },
+};
+
 const Login = ({ setUser }) => {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
@@ -21,8 +37,17 @@ const Login = ({ setUser }) => {
     register,
     handleSubmit,
     formState: { errors },
-    getValues,
+    setValue, // Destructure setValue from useForm
+    reset, // Destructure reset from useForm
   } = useForm();
+
+  // Effect to reset form fields when selectedUser changes
+  useEffect(() => {
+    reset({
+      email: "",
+      password: "",
+    });
+  }, [selectedUser, reset]);
 
   const onSubmit = async (data) => {
     const userType = selectedUser.toLowerCase();
@@ -43,7 +68,7 @@ const Login = ({ setUser }) => {
 
       const dataRecieved = await response.json();
       const result = dataRecieved?.data;
-      if (!response.ok) throw new Error(result || "Login failed Try Again");
+      if (!response.ok) throw new Error(result || "Login failed. Try Again.");
 
       const token = result.token;
       const user = result.user;
@@ -70,6 +95,18 @@ const Login = ({ setUser }) => {
       toast.error(err.message);
     } finally {
       setLoading(false);
+    }
+  };
+
+  // Function to apply demo credentials to the form fields
+  const applyDemoCredentials = () => {
+    const credentials = demoCredentials[selectedUser];
+    if (credentials) {
+      setValue("email", credentials.email, { shouldValidate: true });
+      setValue("password", credentials.password, { shouldValidate: true });
+      toast.info(`Demo credentials for ${selectedUser} applied.`);
+    } else {
+      toast.warn("No demo credentials available for this user type.");
     }
   };
 
@@ -109,6 +146,23 @@ const Login = ({ setUser }) => {
               </p>
             </button>
           ))}
+        </div>
+        <div className="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
+          <h3 className="text-sm font-semibold text-gray-700 mb-2">
+            Demo Credentials for {selectedUser}:
+          </h3>
+          <div className="space-y-1 text-sm text-gray-600">
+            {/* The line below is modified to be clickable and show dynamic credentials */}
+            <p
+              className="cursor-pointer hover:underline"
+              onClick={applyDemoCredentials}
+            >
+              <span className="font-medium">Email:</span>{" "}
+              {demoCredentials[selectedUser].email} /{" "}
+              <span className="font-medium">Password:</span>{" "}
+              {demoCredentials[selectedUser].password}
+            </p>
+          </div>
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
