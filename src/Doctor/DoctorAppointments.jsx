@@ -2,12 +2,15 @@ import React, { useEffect, useState } from "react";
 import fetchFromApi from "../utility/fetchFromApi";
 import { FaStethoscope } from "react-icons/fa";
 import { toast } from "react-toastify";
+import DoctorManagementSkeleton from "../components/LoadingSkeleton/DoctorManagementSkeleton";
 
 const DoctorsAppointments = () => {
   const [Doctorsappointments, setDoctorsAppointments] = useState([]);
   const user = localStorage.getItem("user");
   const doctorId = JSON.parse(user)?.user._id || null;
   console.log("Doctor ID:", doctorId);
+
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     // Fetch Doctorsappointments data from the API
@@ -17,9 +20,11 @@ const DoctorsAppointments = () => {
     )
       .then((data) => {
         setDoctorsAppointments(data);
+        setLoading(false);
       })
       .catch((error) => {
         console.error("Error fetching data:", error.message);
+        setLoading(false);
       });
   }, []);
   console.log(Doctorsappointments);
@@ -60,6 +65,10 @@ const DoctorsAppointments = () => {
   //         console.error("Error deleting appointment:", error);
   //       });
   //   };
+
+  if (loading) {
+    return <DoctorManagementSkeleton />;
+  }
 
   return (
     <div className="m-8">

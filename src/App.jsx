@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Suspense, lazy } from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -22,25 +22,30 @@ import MyProfile from "./components/MyProfile/MyProfile";
 import MyAppointments from "./components/MyAppointments/Myappoitment";
 import PatientForm from "./components/Patient/PatientForm";
 
-// Doctor
-import DoctorDashboard from "./Doctor/DoctorDashboard";
-import DoctorForm from "./admin/doctorOnboardingForm/DoctorForm";
-import DoctorAppointments from "./Doctor/DoctorAppointments";
+// Doctor (lazy)
+const DoctorDashboard = lazy(() => import("./Doctor/DoctorDashboard"));
+const DoctorAppointments = lazy(() => import("./Doctor/DoctorAppointments"));
+const DoctorForm = lazy(() =>
+  import("./admin/doctorOnboardingForm/DoctorForm")
+);
 
-// Admin
-import AdminDashboard from "./admin/AdminDashboard";
-import Doctors from "./Doctor/DoctorManagement";
-import AppointmentBooking from "./admin/BookAppointmentAdmin";
-import Patients from "./admin/PatientManagement";
-import AppointmentManagementPage from "./admin/AppointmentManagement";
-import AdminProfile from "./admin/AdminProfile";
+// Admin (lazy)
+const AdminDashboard = lazy(() => import("./admin/AdminDashboard"));
+const Doctors = lazy(() => import("./Doctor/DoctorManagement"));
+const AppointmentBooking = lazy(() => import("./admin/BookAppointmentAdmin"));
+const Patients = lazy(() => import("./admin/PatientManagement"));
+const AppointmentManagementPage = lazy(() =>
+  import("./admin/AppointmentManagement")
+);
+const AdminProfile = lazy(() => import("./admin/AdminProfile"));
 
 // Layouts
 import PatientLayout from "./LAYOUTS/PatientLayout";
 import DoctorLayout from "./LAYOUTS/DoctorLayout";
 import AdminLayout from "./LAYOUTS/AdminLayout";
 import ProtectedRoute from "./utility/ProtectedRoute";
-import PaymentManagementPage from "./admin/PaymentManagement";
+const PaymentManagementPage = lazy(() => import("./admin/PaymentManagement"));
+import Spinner from "./components/common/Spinner";
 
 function App() {
   const [user, setUser] = useState({});
@@ -103,8 +108,34 @@ function App() {
               </ProtectedRoute>
             }
           >
-            <Route path="dashboard" element={<DoctorDashboard />} />
-            <Route path="appointments/view" element={<DoctorAppointments />} />
+            <Route
+              path="dashboard"
+              element={
+                <Suspense
+                  fallback={
+                    <div className="py-10">
+                      <Spinner />
+                    </div>
+                  }
+                >
+                  <DoctorDashboard />
+                </Suspense>
+              }
+            />
+            <Route
+              path="appointments/view"
+              element={
+                <Suspense
+                  fallback={
+                    <div className="py-10">
+                      <Spinner />
+                    </div>
+                  }
+                >
+                  <DoctorAppointments />
+                </Suspense>
+              }
+            />
             {/* Catch-all for doctor routes */}
             <Route path="*" element={<div>Doctor: Page Not Found</div>} />
           </Route>
@@ -121,18 +152,106 @@ function App() {
               </ProtectedRoute>
             }
           >
-            <Route path="dashboard" element={<AdminDashboard />} />
-            <Route path="doctors/add" element={<DoctorForm />} />
+            <Route
+              path="dashboard"
+              element={
+                <Suspense
+                  fallback={
+                    <div className="py-10">
+                      <Spinner />
+                    </div>
+                  }
+                >
+                  <AdminDashboard />
+                </Suspense>
+              }
+            />
+            <Route
+              path="doctors/add"
+              element={
+                <Suspense
+                  fallback={
+                    <div className="py-10">
+                      <Spinner />
+                    </div>
+                  }
+                >
+                  <DoctorForm />
+                </Suspense>
+              }
+            />
             <Route path="patients/add" element={<PatientForm />} />
-            <Route path="doctors/manage" element={<Doctors />} />
-            <Route path="patients/manage" element={<Patients />} />
+            <Route
+              path="doctors/manage"
+              element={
+                <Suspense
+                  fallback={
+                    <div className="py-10">
+                      <Spinner />
+                    </div>
+                  }
+                >
+                  <Doctors />
+                </Suspense>
+              }
+            />
+            <Route
+              path="patients/manage"
+              element={
+                <Suspense
+                  fallback={
+                    <div className="py-10">
+                      <Spinner />
+                    </div>
+                  }
+                >
+                  <Patients />
+                </Suspense>
+              }
+            />
             <Route path="fees" element={<PaymentManagementPage />} />
-            <Route path="profile" element={<AdminProfile />} />
+            <Route
+              path="profile"
+              element={
+                <Suspense
+                  fallback={
+                    <div className="py-10">
+                      <Spinner />
+                    </div>
+                  }
+                >
+                  <AdminProfile />
+                </Suspense>
+              }
+            />
             <Route
               path="appointments/manage"
-              element={<AppointmentManagementPage />}
+              element={
+                <Suspense
+                  fallback={
+                    <div className="py-10">
+                      <Spinner />
+                    </div>
+                  }
+                >
+                  <AppointmentManagementPage />
+                </Suspense>
+              }
             />
-            <Route path="appointments/book" element={<AppointmentBooking />} />
+            <Route
+              path="appointments/book"
+              element={
+                <Suspense
+                  fallback={
+                    <div className="py-10">
+                      <Spinner />
+                    </div>
+                  }
+                >
+                  <AppointmentBooking />
+                </Suspense>
+              }
+            />
             {/* Catch-all for admin routes */}
             <Route path="*" element={<div>Admin: Page Not Found</div>} />
           </Route>

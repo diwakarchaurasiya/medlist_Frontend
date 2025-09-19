@@ -211,6 +211,7 @@ import {
 import { FaRupeeSign } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import fetchFromApi from "../utility/fetchFromApi";
+import AdminDashboardSkeleton from "../components/LoadingSkeleton/AdminDashboardSkeleton";
 
 const navigationOptions = [
   {
@@ -382,11 +383,7 @@ export default function AdminDashboard() {
   return (
     <div className="min-h-screen  p-6">
       <div className="max-w-7xl mx-auto space-y-6">
-        {loading && (
-          <div className="w-full flex justify-center py-12">
-            <span className="text-gray-500">Loading dashboard…</span>
-          </div>
-        )}
+        {loading && <AdminDashboardSkeleton />}
         {!loading && error && (
           <div className="w-full bg-red-50 border border-red-200 text-red-700 p-4 rounded">
             <div className="flex items-center justify-between">
