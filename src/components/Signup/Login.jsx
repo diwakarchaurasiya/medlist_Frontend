@@ -54,9 +54,9 @@ const Login = ({ setUser }) => {
     setLoading(true);
 
     const apiEndpoints = {
-      patient: "https://medlist-backend.onrender.com/api/patient/login",
-      doctor: "https://medlist-backend.onrender.com/api/doctor/login",
-      admin: "https://medlist-backend.onrender.com/api/admin/login",
+      patient: "http://localhost:5000/api/patient/login",
+      doctor: "http://localhost:5000/api/doctor/login",
+      admin: "http://localhost:5000/api/admin/login",
     };
 
     try {

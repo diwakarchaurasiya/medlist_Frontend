@@ -8,7 +8,7 @@ const Patients = () => {
 
   useEffect(() => {
     // Fetch patients data from the API
-    fetchFromApi("https://medlist-backend.onrender.com/api/patient", "get")
+    fetchFromApi("http://localhost:5000/api/patient", "get")
       .then((data) => {
         setPatients(data.data);
       })
@@ -22,10 +22,7 @@ const Patients = () => {
     setPatients(patients.filter((patient) => patient.id !== id));
 
     // Call API to delete the patient record
-    fetchFromApi(
-      `https://medlist-backend.onrender.com/api/patient/${id}`,
-      "delete"
-    )
+    fetchFromApi(`http://localhost:5000/api/patient/${id}`, "delete")
       .then(toast.success("Patient deleted successfully"))
       .catch((error) => {
         toast.error("Error deleting patient:", error);

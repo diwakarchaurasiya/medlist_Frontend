@@ -32,7 +32,7 @@ const Patients = () => {
   const [patientsPerPage] = useState(10); // Number of patients to display per page
 
   useEffect(() => {
-    fetch("https://medlist-backend.onrender.com/api/patient")
+    fetch("http://localhost:5000/api/patient")
       .then((res) => res.json())
       .then((data) => {
         setPatients(data.data || []);
@@ -58,7 +58,7 @@ const Patients = () => {
 
   const handleDelete = (id) => {
     if (window.confirm("Are you sure you want to delete this patient?")) {
-      fetch(`https://medlist-backend.onrender.com/api/patient/${id}`, {
+      fetch(`http://localhost:5000/api/patient/${id}`, {
         method: "DELETE",
       })
         .then((res) => {
@@ -76,16 +76,13 @@ const Patients = () => {
 
   const handleUpdate = (e) => {
     e.preventDefault();
-    fetch(
-      `https://medlist-backend.onrender.com/api/patient/${selectedPatient._id}`,
-      {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(selectedPatient),
-      }
-    )
+    fetch(`http://localhost:5000/api/patient/${selectedPatient._id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(selectedPatient),
+    })
       .then((res) => {
         if (res.ok) {
           toast.success("Patient updated successfully");

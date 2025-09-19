@@ -27,7 +27,7 @@ const Doctors = () => {
   const [filter, setFilter] = useState("all"); // "all", "neurologist", "cardiologist", etc.
 
   useEffect(() => {
-    fetch("https://medlist-backend.onrender.com/api/doctor")
+    fetch("http://localhost:5000/api/doctor")
       .then((res) => res.json())
       .then((data) => {
         setDoctors(data.data || []);
@@ -52,7 +52,7 @@ const Doctors = () => {
 
   const handleDelete = (id) => {
     if (window.confirm("Are you sure you want to delete this doctor?")) {
-      fetch(`https://medlist-backend.onrender.com/api/doctor/${id}`, {
+      fetch(`http://localhost:5000/api/doctor/${id}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -73,17 +73,14 @@ const Doctors = () => {
 
   const handleUpdate = (e) => {
     e.preventDefault();
-    fetch(
-      `https://medlist-backend.onrender.com/api/doctor/${selectedDoctor._id}`,
-      {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          authorization: `Bearer ${localStorage.getItem("admin_token")}`,
-        },
-        body: JSON.stringify(selectedDoctor),
-      }
-    )
+    fetch(`http://localhost:5000/api/doctor/${selectedDoctor._id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        authorization: `Bearer ${localStorage.getItem("admin_token")}`,
+      },
+      body: JSON.stringify(selectedDoctor),
+    })
       .then((res) => {
         if (res.ok) {
           toast.success("Doctor updated successfully");

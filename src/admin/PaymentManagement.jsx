@@ -19,9 +19,8 @@ import DoctorManagementSkeleton from "../components/LoadingSkeleton/DoctorManage
 
 Modal.setAppElement("#root"); // Important for accessibility with react-modal
 
-const API_URL_APPOINTMENTS =
-  "https://medlist-backend.onrender.com/api/appointment";
-const API_URL_PAYMENTS = "https://medlist-backend.onrender.com/api/payment"; // Your local backend for payments
+const API_URL_APPOINTMENTS = "http://localhost:5000/api/appointment";
+const API_URL_PAYMENTS = "http://localhost:5000/api/payment"; // Your local backend for payments
 
 // Helper function to get patient name, handling null patientId
 const getPatientDisplayName = (patientId) => {

@@ -79,7 +79,7 @@ const DoctorForm = () => {
   };
 
   async function registerDoctor(docsData) {
-    const url = "https://medlist-backend.onrender.com/api/doctor/register";
+    const url = "http://localhost:5000/api/doctor/register";
 
     const formData = new FormData();
 

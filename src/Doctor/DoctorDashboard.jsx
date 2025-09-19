@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import fetchFromApi from "../utility/fetchFromApi";
 import {
   PieChart,
   Pie,
@@ -56,8 +57,8 @@ const navigationOptions = [
   },
 ];
 
-// Appointment stats data
-const appointmentStats = [
+// Appointment stats data (fallback if API not available)
+const fallbackAppointmentStats = [
   {
     id: 1,
     title: "Today's Appointments",
@@ -90,8 +91,8 @@ const appointmentStats = [
   },
 ];
 
-// Recent appointments data
-const recentAppointments = [
+// Recent appointments data (fallback)
+const recentAppointmentsFallback = [
   {
     id: 1,
     patientName: "Sarah Johnson",
@@ -130,8 +131,8 @@ const recentAppointments = [
   },
 ];
 
-// All appointments data
-const allAppointments = [
+// All appointments data (fallback)
+const allAppointmentsFallback = [
   {
     id: 1,
     patientName: "John Smith",
@@ -188,14 +189,14 @@ const allAppointments = [
   },
 ];
 
-// Chart data
-const chartData = [
+// Chart data (fallback)
+const chartDataFallback = [
   { name: "Completed", value: 45, color: "#66B406" },
   { name: "Cancelled", value: 8, color: "#262626" },
   { name: "Scheduled", value: 12, color: "#C6F00D" },
 ];
 
-const barChartData = [
+const barChartDataFallback = [
   { name: "Mon", completed: 8, cancelled: 1, scheduled: 3 },
   { name: "Tue", completed: 6, cancelled: 2, scheduled: 4 },
   { name: "Wed", completed: 9, cancelled: 0, scheduled: 2 },
@@ -209,14 +210,50 @@ export default function DoctorDashboard() {
   const [loading, setLoading] = useState(true);
   const [hoveredCard, setHoveredCard] = useState(null);
   const [activeChart, setActiveChart] = useState("pie");
+  const [appointmentStats, setAppointmentStats] = useState(
+    fallbackAppointmentStats
+  );
+  const [recentAppointments, setRecentAppointments] = useState(
+    recentAppointmentsFallback
+  );
+  const [allAppointments, setAllAppointments] = useState(
+    allAppointmentsFallback
+  );
+  const [chartData, setChartData] = useState(chartDataFallback);
+  const [barChartData, setBarChartData] = useState(barChartDataFallback);
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    // Simulate loading with 2 second timeout
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 2000);
-
-    return () => clearTimeout(timer);
+    const loadDashboard = async () => {
+      try {
+        const base =
+          import.meta.env.VITE_API_BASE || "http://localhost:5000/api";
+        const res = await fetchFromApi(`${base}/doctor/dashboard/data`, "get");
+        if (res && res.success) {
+          const {
+            stats,
+            recentAppointments,
+            allAppointments,
+            chartData,
+            barChartData,
+          } = res.data;
+          setAppointmentStats(stats);
+          setRecentAppointments(recentAppointments);
+          setAllAppointments(allAppointments);
+          setChartData(chartData);
+          setBarChartData(barChartData);
+          setError("");
+        } else {
+          setError(res?.message || "Failed to load doctor dashboard data.");
+        }
+      } catch (e) {
+        console.error("Failed loading doctor dashboard:", e.message);
+        setError(e.message || "Failed to load doctor dashboard.");
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadDashboard();
   }, []);
 
   const getStatusBadge = (status) => {
@@ -252,6 +289,62 @@ export default function DoctorDashboard() {
   return (
     <div className="  p-6">
       <div className="max-w-7xl mx-auto space-y-6">
+        {loading && (
+          <div className="w-full flex justify-center py-12">
+            <span className="text-gray-500">Loading dashboard…</span>
+          </div>
+        )}
+        {!loading && error && (
+          <div className="w-full bg-red-50 border border-red-200 text-red-700 p-4 rounded">
+            <div className="flex items-center justify-between">
+              <p className="font-medium">{error}</p>
+              <button
+                onClick={() => {
+                  setLoading(true);
+                  setError("");
+                  (async () => {
+                    try {
+                      const base =
+                        import.meta.env.VITE_API_BASE ||
+                        "http://localhost:5000/api";
+                      const res = await fetchFromApi(
+                        `${base}/doctor/dashboard/data`,
+                        "get"
+                      );
+                      if (res && res.success) {
+                        const {
+                          stats,
+                          recentAppointments,
+                          allAppointments,
+                          chartData,
+                          barChartData,
+                        } = res.data;
+                        setAppointmentStats(stats);
+                        setRecentAppointments(recentAppointments);
+                        setAllAppointments(allAppointments);
+                        setChartData(chartData);
+                        setBarChartData(barChartData);
+                        setError("");
+                      } else {
+                        setError(
+                          res?.message ||
+                            "Failed to load doctor dashboard data."
+                        );
+                      }
+                    } catch (e) {
+                      setError(e.message || "Failed to load doctor dashboard.");
+                    } finally {
+                      setLoading(false);
+                    }
+                  })();
+                }}
+                className="px-3 py-1 bg-red-600 text-white rounded"
+              >
+                Retry
+              </button>
+            </div>
+          </div>
+        )}
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
@@ -262,222 +355,230 @@ export default function DoctorDashboard() {
         </div>
 
         {/* Navigation Options */}
-        <div>
-          <h2 className="text-md  text-gray-500 my-2 font-light">
-            Quick Navigation
-          </h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-            {navigationOptions.map((option) => (
-              <Link
-                to={option.linkTo}
-                key={option.id}
-                className="bg-white rounded-lg p-4 cursor-pointer transition-all duration-200 hover:shadow-lg hover:scale-105 border-2 hover:border-primary"
-                onMouseEnter={() => setHoveredCard(option.id)}
-                onMouseLeave={() => setHoveredCard(null)}
-              >
-                <div className="flex flex-col items-center text-center">
-                  <div className="text-2xl p-2">{option.icon}</div>
-                  <h3 className="font-medium text-gray-900 text-sm">
-                    {option.title}
-                  </h3>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </div>
-
-        {/* Appointment Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {appointmentStats.map((stat) => (
-            <div
-              key={stat.id}
-              className={`${stat.bgColor} ${stat.textColor} rounded-lg p-6 transition-all duration-200 hover:shadow-lg hover:scale-105`}
-            >
-              <div className="flex items-center justify-between">
-                <div>
-                  <p
-                    className={`text-sm font-medium ${
-                      stat.textColor === "text-white"
-                        ? "text-gray-200"
-                        : "text-gray-600"
-                    }`}
-                  >
-                    {stat.title}
-                  </p>
-                  <p className="text-3xl font-bold mt-1">{stat.count}</p>
-                  <div className="flex items-center mt-2">
-                    <span
-                      className={`text-sm ${
-                        stat.trendUp ? "text-green-400" : "text-red-400"
-                      }`}
-                    >
-                      {stat.trendUp ? "↗" : "↘"} {stat.trend}
-                    </span>
+        {!loading && !error && (
+          <div>
+            <h2 className="text-md  text-gray-500 my-2 font-light">
+              Quick Navigation
+            </h2>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+              {navigationOptions.map((option) => (
+                <Link
+                  to={option.linkTo}
+                  key={option.id}
+                  className="bg-white rounded-lg p-4 cursor-pointer transition-all duration-200 hover:shadow-lg hover:scale-105 border-2 hover:border-primary"
+                  onMouseEnter={() => setHoveredCard(option.id)}
+                  onMouseLeave={() => setHoveredCard(null)}
+                >
+                  <div className="flex flex-col items-center text-center">
+                    <div className="text-2xl p-2">{option.icon}</div>
+                    <h3 className="font-medium text-gray-900 text-sm">
+                      {option.title}
+                    </h3>
                   </div>
-                </div>
-                <div className="text-3xl opacity-80">{stat.icon}</div>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Charts and Appointments */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Chart Section */}
-          <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-100">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900 flex items-center">
-                <span className="mr-2">📊</span>
-                Appointment Analytics
-              </h3>
-              <div className="flex space-x-2">
-                <button
-                  onClick={() => setActiveChart("pie")}
-                  className={`px-3 py-1 rounded text-sm transition-colors duration-200 ${
-                    activeChart === "pie"
-                      ? "bg-primary text-white"
-                      : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                  }`}
-                >
-                  Today
-                </button>
-                <button
-                  onClick={() => setActiveChart("bar")}
-                  className={`px-3 py-1 rounded text-sm transition-colors duration-200 ${
-                    activeChart === "bar"
-                      ? "bg-primary text-white"
-                      : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                  }`}
-                >
-                  This Week
-                </button>
-              </div>
-            </div>
-
-            <ResponsiveContainer width="100%" height={300}>
-              {activeChart === "pie" ? (
-                <PieChart>
-                  <Pie
-                    data={chartData}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={60}
-                    outerRadius={120}
-                    paddingAngle={5}
-                    dataKey="value"
-                  >
-                    {chartData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
-                    ))}
-                  </Pie>
-                  <Tooltip content={<CustomTooltip />} />
-                  <Legend />
-                </PieChart>
-              ) : (
-                <BarChart data={barChartData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Bar dataKey="completed" fill="#66B406" name="Completed" />
-                  <Bar dataKey="cancelled" fill="#262626" name="Cancelled" />
-                </BarChart>
-              )}
-            </ResponsiveContainer>
-          </div>
-
-          {/* Recent Appointments */}
-          <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-100">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-              <span className="mr-2">🕒</span>
-              Recent Appointments
-            </h3>
-            <div className="space-y-4 max-h-80 overflow-y-auto">
-              {recentAppointments.map((appointment) => (
-                <div
-                  key={appointment.id}
-                  className="flex items-center justify-between p-3 border border-gray-100 rounded-lg hover:bg-gray-50 transition-colors duration-200"
-                >
-                  <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 bg-primary text-white rounded-full flex items-center justify-center font-medium text-sm">
-                      {appointment.avatar}
-                    </div>
-                    <div>
-                      <p className="font-medium text-gray-900">
-                        {appointment.patientName}
-                      </p>
-                      <p className="text-sm text-gray-600">
-                        {appointment.time} - {appointment.type}
-                      </p>
-                    </div>
-                  </div>
-                  {getStatusBadge(appointment.status)}
-                </div>
+                </Link>
               ))}
             </div>
           </div>
-        </div>
+        )}
+
+        {/* Appointment Stats */}
+        {!loading && !error && (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {appointmentStats.map((stat) => (
+              <div
+                key={stat.id}
+                className={`${stat.bgColor} ${stat.textColor} rounded-lg p-6 transition-all duration-200 hover:shadow-lg hover:scale-105`}
+              >
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p
+                      className={`text-sm font-medium ${
+                        stat.textColor === "text-white"
+                          ? "text-gray-200"
+                          : "text-gray-600"
+                      }`}
+                    >
+                      {stat.title}
+                    </p>
+                    <p className="text-3xl font-bold mt-1">{stat.count}</p>
+                    <div className="flex items-center mt-2">
+                      <span
+                        className={`text-sm ${
+                          stat.trendUp ? "text-green-400" : "text-red-400"
+                        }`}
+                      >
+                        {stat.trendUp ? "↗" : "↘"} {stat.trend}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="text-3xl opacity-80">{stat.icon}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Charts and Appointments */}
+        {!loading && !error && (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Chart Section */}
+            <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-100">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-gray-900 flex items-center">
+                  <span className="mr-2">📊</span>
+                  Appointment Analytics
+                </h3>
+                <div className="flex space-x-2">
+                  <button
+                    onClick={() => setActiveChart("pie")}
+                    className={`px-3 py-1 rounded text-sm transition-colors duration-200 ${
+                      activeChart === "pie"
+                        ? "bg-primary text-white"
+                        : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                    }`}
+                  >
+                    Today
+                  </button>
+                  <button
+                    onClick={() => setActiveChart("bar")}
+                    className={`px-3 py-1 rounded text-sm transition-colors duration-200 ${
+                      activeChart === "bar"
+                        ? "bg-primary text-white"
+                        : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                    }`}
+                  >
+                    This Week
+                  </button>
+                </div>
+              </div>
+
+              <ResponsiveContainer width="100%" height={300}>
+                {activeChart === "pie" ? (
+                  <PieChart>
+                    <Pie
+                      data={chartData}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={60}
+                      outerRadius={120}
+                      paddingAngle={5}
+                      dataKey="value"
+                    >
+                      {chartData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      ))}
+                    </Pie>
+                    <Tooltip content={<CustomTooltip />} />
+                    <Legend />
+                  </PieChart>
+                ) : (
+                  <BarChart data={barChartData}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="name" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Bar dataKey="completed" fill="#66B406" name="Completed" />
+                    <Bar dataKey="cancelled" fill="#262626" name="Cancelled" />
+                  </BarChart>
+                )}
+              </ResponsiveContainer>
+            </div>
+
+            {/* Recent Appointments */}
+            <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-100">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                <span className="mr-2">🕒</span>
+                Recent Appointments
+              </h3>
+              <div className="space-y-4 max-h-80 overflow-y-auto">
+                {recentAppointments.map((appointment) => (
+                  <div
+                    key={appointment.id}
+                    className="flex items-center justify-between p-3 border border-gray-100 rounded-lg hover:bg-gray-50 transition-colors duration-200"
+                  >
+                    <div className="flex items-center space-x-3">
+                      <div className="w-10 h-10 bg-primary text-white rounded-full flex items-center justify-center font-medium text-sm">
+                        {appointment.avatar}
+                      </div>
+                      <div>
+                        <p className="font-medium text-gray-900">
+                          {appointment.patientName}
+                        </p>
+                        <p className="text-sm text-gray-600">
+                          {appointment.time} - {appointment.type}
+                        </p>
+                      </div>
+                    </div>
+                    {getStatusBadge(appointment.status)}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* All Appointments */}
-        <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-100">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-            <span className="mr-2">📋</span>
-            All Appointments
-          </h3>
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-gray-200">
-                  <th className="text-left py-3 px-4 font-medium text-gray-900">
-                    Patient
-                  </th>
-                  <th className="text-left py-3 px-4 font-medium text-gray-900">
-                    Date & Time
-                  </th>
-                  <th className="text-left py-3 px-4 font-medium text-gray-900">
-                    Type
-                  </th>
-                  <th className="text-left py-3 px-4 font-medium text-gray-900">
-                    Duration
-                  </th>
-                  <th className="text-left py-3 px-4 font-medium text-gray-900">
-                    Status
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {allAppointments.map((appointment) => (
-                  <tr
-                    key={appointment.id}
-                    className="border-b border-gray-100 hover:bg-gray-50 transition-colors duration-200"
-                  >
-                    <td className="py-3 px-4">
-                      <div className="font-medium text-gray-900">
-                        {appointment.patientName}
-                      </div>
-                    </td>
-                    <td className="py-3 px-4">
-                      <div className="text-gray-900">{appointment.date}</div>
-                      <div className="text-sm text-gray-600">
-                        {appointment.time}
-                      </div>
-                    </td>
-                    <td className="py-3 px-4 text-gray-900">
-                      {appointment.type}
-                    </td>
-                    <td className="py-3 px-4 text-gray-600">
-                      {appointment.duration}
-                    </td>
-                    <td className="py-3 px-4">
-                      {getStatusBadge(appointment.status)}
-                    </td>
+        {!loading && !error && (
+          <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-100">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+              <span className="mr-2">📋</span>
+              All Appointments
+            </h3>
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-gray-200">
+                    <th className="text-left py-3 px-4 font-medium text-gray-900">
+                      Patient
+                    </th>
+                    <th className="text-left py-3 px-4 font-medium text-gray-900">
+                      Date & Time
+                    </th>
+                    <th className="text-left py-3 px-4 font-medium text-gray-900">
+                      Type
+                    </th>
+                    <th className="text-left py-3 px-4 font-medium text-gray-900">
+                      Duration
+                    </th>
+                    <th className="text-left py-3 px-4 font-medium text-gray-900">
+                      Status
+                    </th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {allAppointments.map((appointment) => (
+                    <tr
+                      key={appointment.id}
+                      className="border-b border-gray-100 hover:bg-gray-50 transition-colors duration-200"
+                    >
+                      <td className="py-3 px-4">
+                        <div className="font-medium text-gray-900">
+                          {appointment.patientName}
+                        </div>
+                      </td>
+                      <td className="py-3 px-4">
+                        <div className="text-gray-900">{appointment.date}</div>
+                        <div className="text-sm text-gray-600">
+                          {appointment.time}
+                        </div>
+                      </td>
+                      <td className="py-3 px-4 text-gray-900">
+                        {appointment.type}
+                      </td>
+                      <td className="py-3 px-4 text-gray-600">
+                        {appointment.duration}
+                      </td>
+                      <td className="py-3 px-4">
+                        {getStatusBadge(appointment.status)}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );

@@ -94,8 +94,8 @@ const AppointmentBooking = () => {
     const fetchData = async () => {
       try {
         const [doctorsRes, patientsRes] = await Promise.all([
-          fetch("https://medlist-backend.onrender.com/api/doctor"),
-          fetch("https://medlist-backend.onrender.com/api/patient"),
+          fetch("http://localhost:5000/api/doctor"),
+          fetch("http://localhost:5000/api/patient"),
         ]);
 
         if (!doctorsRes.ok) throw new Error("Failed to fetch doctors");
@@ -222,7 +222,7 @@ const AppointmentBooking = () => {
       };
       try {
         const response = await fetch(
-          "https://medlist-backend.onrender.com/api/appointment/create",
+          "http://localhost:5000/api/appointment/create",
           {
             method: "POST",
             headers: {

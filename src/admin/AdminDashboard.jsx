@@ -19,21 +19,21 @@
 //   const [patients, setPatients] = useState([]);
 
 //   useEffect(() => {
-//     fetchFromApi("https://medlist-backend.onrender.com/api/appointment", "get")
+//     fetchFromApi("http://localhost:5000/api/appointment", "get")
 //       .then((data) => {
 //         setAppointments(data);
 //       })
 //       .catch((error) => {
 //         console.error("Error fetching data:", error.message);
 //       });
-//     fetchFromApi("https://medlist-backend.onrender.com/api/doctor", "get", null)
+//     fetchFromApi("http://localhost:5000/api/doctor", "get", null)
 //       .then((data) => {
 //         setDoctors(data.data);
 //       })
 //       .catch((error) => {
 //         console.error("Error fetching data:", error.message);
 //       });
-//     fetchFromApi("https://medlist-backend.onrender.com/api/patient", "get")
+//     fetchFromApi("http://localhost:5000/api/patient", "get")
 //       .then((data) => {
 //         setPatients(data.data);
 //       })
@@ -210,6 +210,7 @@ import {
 } from "lucide-react";
 import { FaRupeeSign } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import fetchFromApi from "../utility/fetchFromApi";
 
 const navigationOptions = [
   {
@@ -244,137 +245,55 @@ const navigationOptions = [
   },
 ];
 
-// Admin stats data
-const adminStats = [
-  {
-    id: 1,
-    title: "Total Appointments",
-    count: 1247,
-    trend: "+12%",
-    trendUp: true,
-    icon: Calendar,
-    bgColor: "bg-[#66B406]",
-    textColor: "text-white",
-  },
-  {
-    id: 2,
-    title: "Total Doctors",
-    count: 24,
-    trend: "+2",
-    trendUp: true,
-    icon: UserCheck,
-    bgColor: "bg-white border-2 border-gray-200",
-    textColor: "text-gray-900",
-  },
-  {
-    id: 3,
-    title: "Total Patients",
-    count: 892,
-    trend: "+45",
-    trendUp: true,
-    icon: Users,
-    bgColor: "bg-black",
-    textColor: "text-white",
-  },
-  {
-    id: 4,
-    title: "Today's Collection",
-    count: "₹12,450",
-    trend: "+8.5%",
-    trendUp: true,
-    icon: FaRupeeSign,
-    bgColor: "bg-white border-2 border-gray-200",
-    textColor: "text-gray-900",
-  },
-];
+// Admin stats data will be fetched from backend
 
-// Weekly appointment trend data
-const weeklyTrendData = [
-  { day: "Mon", appointments: 45, bookings: 52 },
-  { day: "Tue", appointments: 38, bookings: 41 },
-  { day: "Wed", appointments: 62, bookings: 58 },
-  { day: "Thu", appointments: 55, bookings: 49 },
-  { day: "Fri", appointments: 71, bookings: 68 },
-  { day: "Sat", appointments: 34, bookings: 38 },
-  { day: "Sun", appointments: 28, bookings: 31 },
-];
+// Weekly appointment trend data from backend
 
-// Demographics data
-const demographicsData = [
-  { name: "Male", value: 456, color: "#66B406" },
-  { name: "Female", value: 436, color: "#000000" },
-];
+// Demographics data from backend
 
-// Appointments data for management
-const appointmentsData = [
-  {
-    id: 1,
-    patientName: "Sarah Johnson",
-    doctorName: "Dr. Smith",
-    date: "2024-12-15",
-    time: "09:00 AM",
-    type: "Consultation",
-    status: "scheduled",
-    amount: "$150",
-  },
-  {
-    id: 2,
-    patientName: "Michael Chen",
-    doctorName: "Dr. Brown",
-    date: "2024-12-15",
-    time: "10:30 AM",
-    type: "Follow-up",
-    status: "completed",
-    amount: "$100",
-  },
-  {
-    id: 3,
-    patientName: "Emily Davis",
-    doctorName: "Dr. Wilson",
-    date: "2024-12-15",
-    time: "02:00 PM",
-    type: "Check-up",
-    status: "scheduled",
-    amount: "$120",
-  },
-  {
-    id: 4,
-    patientName: "Robert Wilson",
-    doctorName: "Dr. Johnson",
-    date: "2024-12-15",
-    time: "03:30 PM",
-    type: "Consultation",
-    status: "pending",
-    amount: "$180",
-  },
-  {
-    id: 5,
-    patientName: "Lisa Anderson",
-    doctorName: "Dr. Davis",
-    date: "2024-12-14",
-    time: "11:00 AM",
-    type: "Surgery Consultation",
-    status: "cancelled",
-    amount: "$250",
-  },
-  {
-    id: 6,
-    patientName: "David Thompson",
-    doctorName: "Dr. Miller",
-    date: "2024-12-16",
-    time: "04:00 PM",
-    type: "Follow-up",
-    status: "scheduled",
-    amount: "$90",
-  },
-];
+// Appointments data for management from backend
 
 export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [hoveredCard, setHoveredCard] = useState(null);
-  const [appointments, setAppointments] = useState(appointmentsData);
+  const [appointments, setAppointments] = useState([]);
+  const [adminStats, setAdminStats] = useState([]);
+  const [weeklyTrendData, setWeeklyTrendData] = useState([]);
+  const [demographicsData, setDemographicsData] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    const loadDashboard = async () => {
+      try {
+        const base =
+          import.meta.env.VITE_API_BASE || "http://localhost:5000/api";
+        const res = await fetchFromApi(`${base}/admin/dashboard`, "get");
+        if (res && res.success) {
+          const { stats, weeklyTrend, demographics, appointments } = res.data;
+          setAdminStats(
+            stats.map((s, idx) => ({
+              ...s,
+              icon: [Calendar, UserCheck, Users, FaRupeeSign][idx] || Calendar,
+            }))
+          );
+          setWeeklyTrendData(weeklyTrend);
+          setDemographicsData(demographics);
+          setAppointments(appointments);
+          setError("");
+        } else {
+          setError(res?.message || "Failed to load admin dashboard data.");
+        }
+      } catch (e) {
+        console.error("Failed loading admin dashboard:", e.message);
+        setError(e.message || "Failed to load admin dashboard.");
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadDashboard();
+  }, []);
 
   const getStatusBadge = (status) => {
     const statusConfig = {
@@ -463,6 +382,67 @@ export default function AdminDashboard() {
   return (
     <div className="min-h-screen  p-6">
       <div className="max-w-7xl mx-auto space-y-6">
+        {loading && (
+          <div className="w-full flex justify-center py-12">
+            <span className="text-gray-500">Loading dashboard…</span>
+          </div>
+        )}
+        {!loading && error && (
+          <div className="w-full bg-red-50 border border-red-200 text-red-700 p-4 rounded">
+            <div className="flex items-center justify-between">
+              <p className="font-medium">{error}</p>
+              <button
+                onClick={() => {
+                  setLoading(true);
+                  setError("");
+                  // Retry
+                  (async () => {
+                    try {
+                      const base =
+                        import.meta.env.VITE_API_BASE ||
+                        "http://localhost:5000/api";
+                      const res = await fetchFromApi(
+                        `${base}/admin/dashboard`,
+                        "get"
+                      );
+                      if (res && res.success) {
+                        const {
+                          stats,
+                          weeklyTrend,
+                          demographics,
+                          appointments,
+                        } = res.data;
+                        setAdminStats(
+                          stats.map((s, idx) => ({
+                            ...s,
+                            icon:
+                              [Calendar, UserCheck, Users, FaRupeeSign][idx] ||
+                              Calendar,
+                          }))
+                        );
+                        setWeeklyTrendData(weeklyTrend);
+                        setDemographicsData(demographics);
+                        setAppointments(appointments);
+                        setError("");
+                      } else {
+                        setError(
+                          res?.message || "Failed to load admin dashboard data."
+                        );
+                      }
+                    } catch (e) {
+                      setError(e.message || "Failed to load admin dashboard.");
+                    } finally {
+                      setLoading(false);
+                    }
+                  })();
+                }}
+                className="px-3 py-1 bg-red-600 text-white rounded"
+              >
+                Retry
+              </button>
+            </div>
+          </div>
+        )}
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
@@ -496,264 +476,275 @@ export default function AdminDashboard() {
         </div>
 
         {/* Admin Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {adminStats.map((stat) => {
-            const IconComponent = stat.icon;
-            return (
-              <div
-                key={stat.id}
-                className={`${stat.bgColor} ${stat.textColor} rounded-lg p-6 transition-all duration-200 hover:shadow-lg hover:scale-105`}
-              >
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p
-                      className={`text-sm font-medium ${
-                        stat.textColor === "text-white"
-                          ? "text-gray-200"
-                          : "text-gray-600"
-                      }`}
-                    >
-                      {stat.title}
-                    </p>
-                    <p className="text-3xl font-bold mt-1">{stat.count}</p>
-                    <div className="flex items-center mt-2">
-                      <span
-                        className={`text-sm ${
-                          stat.trendUp ? "text-green-400" : "text-red-400"
+        {!loading && !error && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {adminStats.map((stat) => {
+              const IconComponent = stat.icon;
+              return (
+                <div
+                  key={stat.id}
+                  className={`${stat.bgColor} ${stat.textColor} rounded-lg p-6 transition-all duration-200 hover:shadow-lg hover:scale-105`}
+                >
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p
+                        className={`text-sm font-medium ${
+                          stat.textColor === "text-white"
+                            ? "text-gray-200"
+                            : "text-gray-600"
                         }`}
                       >
-                        {stat.trendUp ? "↗" : "↘"} {stat.trend}
-                      </span>
+                        {stat.title}
+                      </p>
+                      <p className="text-3xl font-bold mt-1">{stat.count}</p>
+                      <div className="flex items-center mt-2">
+                        <span
+                          className={`text-sm ${
+                            stat.trendUp ? "text-green-400" : "text-red-400"
+                          }`}
+                        >
+                          {stat.trendUp ? "↗" : "↘"} {stat.trend}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="opacity-80">
+                      <IconComponent size={32} />
                     </div>
                   </div>
-                  <div className="opacity-80">
-                    <IconComponent size={32} />
-                  </div>
                 </div>
-              </div>
-            );
-          })}
-        </div>
+              );
+            })}
+          </div>
+        )}
 
         {/* Charts Section */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Weekly Trend Chart (2/3 width) */}
-          <div className="lg:col-span-2 bg-white rounded-lg p-6 shadow-sm border border-gray-100">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-              <BarChart3 className="mr-2 text-[#66B406]" size={20} />
-              Weekly Appointment Booking Trend
-            </h3>
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={weeklyTrendData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="day" />
-                <YAxis />
-                <Tooltip content={<CustomTooltip />} />
-                <Line
-                  type="monotone"
-                  dataKey="appointments"
-                  stroke="#66B406"
-                  strokeWidth={3}
-                  dot={{ fill: "#66B406", strokeWidth: 2, r: 6 }}
-                  name="Completed Appointments"
-                />
-                <Line
-                  type="monotone"
-                  dataKey="bookings"
-                  stroke="#000000"
-                  strokeWidth={2}
-                  dot={{ fill: "#000000", strokeWidth: 2, r: 4 }}
-                  name="New Bookings"
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
+          {!loading && !error && (
+            <div className="lg:col-span-2 bg-white rounded-lg p-6 shadow-sm border border-gray-100">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                <BarChart3 className="mr-2 text-[#66B406]" size={20} />
+                Weekly Appointment Booking Trend
+              </h3>
+              <ResponsiveContainer width="100%" height={300}>
+                <LineChart data={weeklyTrendData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="day" />
+                  <YAxis />
+                  <Tooltip content={<CustomTooltip />} />
+                  <Line
+                    type="monotone"
+                    dataKey="appointments"
+                    stroke="#66B406"
+                    strokeWidth={3}
+                    dot={{ fill: "#66B406", strokeWidth: 2, r: 6 }}
+                    name="Completed Appointments"
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="bookings"
+                    stroke="#000000"
+                    strokeWidth={2}
+                    dot={{ fill: "#000000", strokeWidth: 2, r: 4 }}
+                    name="New Bookings"
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+          )}
 
           {/* Demographics Chart (1/3 width) */}
-          <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-100">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-              <Users className="mr-2 text-[#66B406]" size={20} />
-              Patient Demographics
-            </h3>
-            <ResponsiveContainer width="100%" height={300}>
-              <PieChart>
-                <Pie
-                  data={demographicsData}
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={60}
-                  outerRadius={100}
-                  paddingAngle={5}
-                  dataKey="value"
-                >
-                  {demographicsData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
-                  ))}
-                </Pie>
-                <Tooltip />
-                <Legend />
-              </PieChart>
-            </ResponsiveContainer>
-            <div className="mt-4 space-y-2">
-              {demographicsData.map((item, index) => (
-                <div key={index} className="flex items-center justify-between">
-                  <div className="flex items-center space-x-2">
-                    <div
-                      className="w-3 h-3 rounded-full"
-                      style={{ backgroundColor: item.color }}
-                    ></div>
-                    <span className="text-sm font-medium text-gray-700">
-                      {item.name}
+          {!loading && !error && (
+            <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-100">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                <Users className="mr-2 text-[#66B406]" size={20} />
+                Patient Demographics
+              </h3>
+              <ResponsiveContainer width="100%" height={300}>
+                <PieChart>
+                  <Pie
+                    data={demographicsData}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={60}
+                    outerRadius={100}
+                    paddingAngle={5}
+                    dataKey="value"
+                  >
+                    {demographicsData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                  <Legend />
+                </PieChart>
+              </ResponsiveContainer>
+              <div className="mt-4 space-y-2">
+                {demographicsData.map((item, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center justify-between"
+                  >
+                    <div className="flex items-center space-x-2">
+                      <div
+                        className="w-3 h-3 rounded-full"
+                        style={{ backgroundColor: item.color }}
+                      ></div>
+                      <span className="text-sm font-medium text-gray-700">
+                        {item.name}
+                      </span>
+                    </div>
+                    <span className="text-sm font-bold text-gray-900">
+                      {item.value}
                     </span>
                   </div>
-                  <span className="text-sm font-bold text-gray-900">
-                    {item.value}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Appointment Management Section */}
-        <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-100">
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-lg font-semibold text-gray-900 flex items-center">
-              <Calendar className="mr-2 text-[#66B406]" size={20} />
-              Manage Appointments
-            </h3>
-            <div className="flex items-center space-x-4">
-              <div className="relative">
-                <Search
-                  className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-                  size={16}
-                />
-                <input
-                  type="text"
-                  placeholder="Search appointments..."
-                  className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#66B406] focus:border-transparent"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
-              </div>
-              <select
-                className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#66B406] focus:border-transparent"
-                value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
-              >
-                <option value="all">All Status</option>
-                <option value="scheduled">Scheduled</option>
-                <option value="completed">Completed</option>
-                <option value="pending">Pending</option>
-                <option value="cancelled">Cancelled</option>
-              </select>
-            </div>
-          </div>
-
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-gray-200">
-                  <th className="text-left py-3 px-4 font-medium text-gray-900">
-                    Patient
-                  </th>
-                  <th className="text-left py-3 px-4 font-medium text-gray-900">
-                    Doctor
-                  </th>
-                  <th className="text-left py-3 px-4 font-medium text-gray-900">
-                    Date & Time
-                  </th>
-                  <th className="text-left py-3 px-4 font-medium text-gray-900">
-                    Type
-                  </th>
-                  <th className="text-left py-3 px-4 font-medium text-gray-900">
-                    Amount
-                  </th>
-                  <th className="text-left py-3 px-4 font-medium text-gray-900">
-                    Status
-                  </th>
-                  <th className="text-left py-3 px-4 font-medium text-gray-900">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredAppointments.map((appointment) => (
-                  <tr
-                    key={appointment.id}
-                    className="border-b border-gray-100 hover:bg-gray-50 transition-colors duration-200"
-                  >
-                    <td className="py-3 px-4">
-                      <div className="font-medium text-gray-900">
-                        {appointment.patientName}
-                      </div>
-                    </td>
-                    <td className="py-3 px-4">
-                      <div className="text-gray-900">
-                        {appointment.doctorName}
-                      </div>
-                    </td>
-                    <td className="py-3 px-4">
-                      <div className="text-gray-900">{appointment.date}</div>
-                      <div className="text-sm text-gray-600">
-                        {appointment.time}
-                      </div>
-                    </td>
-                    <td className="py-3 px-4 text-gray-900">
-                      {appointment.type}
-                    </td>
-                    <td className="py-3 px-4 text-gray-900 font-medium">
-                      {appointment.amount}
-                    </td>
-                    <td className="py-3 px-4">
-                      {getStatusBadge(appointment.status)}
-                    </td>
-                    <td className="py-3 px-4">
-                      <div className="flex items-center space-x-2">
-                        <button
-                          className="p-1 text-blue-600 hover:bg-blue-100 rounded transition-colors duration-200"
-                          title="View Details"
-                        >
-                          <Eye size={16} />
-                        </button>
-                        <select
-                          className="text-xs px-2 py-1 border border-gray-300 rounded focus:ring-1 focus:ring-[#66B406]"
-                          value={appointment.status}
-                          onChange={(e) =>
-                            updateAppointmentStatus(
-                              appointment.id,
-                              e.target.value
-                            )
-                          }
-                        >
-                          <option value="scheduled">Scheduled</option>
-                          <option value="completed">Completed</option>
-                          <option value="pending">Pending</option>
-                          <option value="cancelled">Cancelled</option>
-                        </select>
-                        <button
-                          className="p-1 text-red-600 hover:bg-red-100 rounded transition-colors duration-200"
-                          title="Delete Appointment"
-                          onClick={() => deleteAppointment(appointment.id)}
-                        >
-                          <Trash2 size={16} />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
                 ))}
-              </tbody>
-            </table>
-          </div>
-
-          {filteredAppointments.length === 0 && (
-            <div className="text-center py-8">
-              <p className="text-gray-500">
-                No appointments found matching your criteria.
-              </p>
+              </div>
             </div>
           )}
         </div>
+
+        {/* Appointment Management Section */}
+        {!loading && !error && (
+          <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-100">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-lg font-semibold text-gray-900 flex items-center">
+                <Calendar className="mr-2 text-[#66B406]" size={20} />
+                Manage Appointments
+              </h3>
+              <div className="flex items-center space-x-4">
+                <div className="relative">
+                  <Search
+                    className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                    size={16}
+                  />
+                  <input
+                    type="text"
+                    placeholder="Search appointments..."
+                    className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#66B406] focus:border-transparent"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
+                </div>
+                <select
+                  className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#66B406] focus:border-transparent"
+                  value={statusFilter}
+                  onChange={(e) => setStatusFilter(e.target.value)}
+                >
+                  <option value="all">All Status</option>
+                  <option value="scheduled">Scheduled</option>
+                  <option value="completed">Completed</option>
+                  <option value="pending">Pending</option>
+                  <option value="cancelled">Cancelled</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-gray-200">
+                    <th className="text-left py-3 px-4 font-medium text-gray-900">
+                      Patient
+                    </th>
+                    <th className="text-left py-3 px-4 font-medium text-gray-900">
+                      Doctor
+                    </th>
+                    <th className="text-left py-3 px-4 font-medium text-gray-900">
+                      Date & Time
+                    </th>
+                    <th className="text-left py-3 px-4 font-medium text-gray-900">
+                      Type
+                    </th>
+                    <th className="text-left py-3 px-4 font-medium text-gray-900">
+                      Amount
+                    </th>
+                    <th className="text-left py-3 px-4 font-medium text-gray-900">
+                      Status
+                    </th>
+                    <th className="text-left py-3 px-4 font-medium text-gray-900">
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredAppointments.map((appointment) => (
+                    <tr
+                      key={appointment.id}
+                      className="border-b border-gray-100 hover:bg-gray-50 transition-colors duration-200"
+                    >
+                      <td className="py-3 px-4">
+                        <div className="font-medium text-gray-900">
+                          {appointment.patientName}
+                        </div>
+                      </td>
+                      <td className="py-3 px-4">
+                        <div className="text-gray-900">
+                          {appointment.doctorName}
+                        </div>
+                      </td>
+                      <td className="py-3 px-4">
+                        <div className="text-gray-900">{appointment.date}</div>
+                        <div className="text-sm text-gray-600">
+                          {appointment.time}
+                        </div>
+                      </td>
+                      <td className="py-3 px-4 text-gray-900">
+                        {appointment.type}
+                      </td>
+                      <td className="py-3 px-4 text-gray-900 font-medium">
+                        {appointment.amount}
+                      </td>
+                      <td className="py-3 px-4">
+                        {getStatusBadge(appointment.status)}
+                      </td>
+                      <td className="py-3 px-4">
+                        <div className="flex items-center space-x-2">
+                          <button
+                            className="p-1 text-blue-600 hover:bg-blue-100 rounded transition-colors duration-200"
+                            title="View Details"
+                          >
+                            <Eye size={16} />
+                          </button>
+                          <select
+                            className="text-xs px-2 py-1 border border-gray-300 rounded focus:ring-1 focus:ring-[#66B406]"
+                            value={appointment.status}
+                            onChange={(e) =>
+                              updateAppointmentStatus(
+                                appointment.id,
+                                e.target.value
+                              )
+                            }
+                          >
+                            <option value="scheduled">Scheduled</option>
+                            <option value="completed">Completed</option>
+                            <option value="pending">Pending</option>
+                            <option value="cancelled">Cancelled</option>
+                          </select>
+                          <button
+                            className="p-1 text-red-600 hover:bg-red-100 rounded transition-colors duration-200"
+                            title="Delete Appointment"
+                            onClick={() => deleteAppointment(appointment.id)}
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {filteredAppointments.length === 0 && (
+              <div className="text-center py-8">
+                <p className="text-gray-500">
+                  No appointments found matching your criteria.
+                </p>
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

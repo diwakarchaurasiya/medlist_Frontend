@@ -18,7 +18,7 @@ const DoctorDetails = () => {
   const fetchDoc = async () => {
     try {
       const response = await fetch(
-        `https://medlist-backend.onrender.com/api/doctor/${docName}`
+        `http://localhost:5000/api/doctor/${docName}`
       );
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
