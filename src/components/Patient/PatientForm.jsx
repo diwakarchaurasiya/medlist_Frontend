@@ -14,7 +14,7 @@ const PatientForm = () => {
   const navigate = useNavigate();
   // Function to handle patient registration
   async function registerPatient(patientData) {
-    const url = "http://localhost:5000/api/patient/register";
+    const url = "https://medlist-backend.onrender.com/api/patient/register";
     try {
       const response = await fetch(url, {
         method: "POST",

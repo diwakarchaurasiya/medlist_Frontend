@@ -3,7 +3,7 @@ import SkeletonBlock from "../common/SkeletonBlock";
 
 const DoctorDashboardSkeleton = () => {
   return (
-    <div className="p-6">
+    <div class Name="p-6">
       <div className="max-w-7xl mx-auto space-y-6">
         <SkeletonBlock width={260} height={28} />
 

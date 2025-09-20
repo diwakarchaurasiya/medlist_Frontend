@@ -8,7 +8,9 @@ const TopDocs = () => {
   const [topDoctors, setTopDoctors] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const getTopDocs = async () => {
-    let apiResponse = await fetch("http://localhost:5000/api/doctor")
+    let apiResponse = await fetch(
+      "https://medlist-backend.onrender.com/api/doctor"
+    )
       .then((res) => res.json())
       .catch((err) => console.log(err))
       .finally(() => setIsLoading(false));

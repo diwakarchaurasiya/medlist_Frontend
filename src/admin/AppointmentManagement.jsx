@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import DoctorManagementSkeleton from "../components/LoadingSkeleton/DoctorManagementSkeleton";
 
-const API_URL = "http://localhost:5000/api/appointment";
+const API_URL = "https://medlist-backend.onrender.com/api/appointment";
 
 // --- Helper Functions (remain unchanged) ---
 

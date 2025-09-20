@@ -19,8 +19,9 @@ import DoctorManagementSkeleton from "../components/LoadingSkeleton/DoctorManage
 
 Modal.setAppElement("#root"); // Important for accessibility with react-modal
 
-const API_URL_APPOINTMENTS = "http://localhost:5000/api/appointment";
-const API_URL_PAYMENTS = "http://localhost:5000/api/payment"; // Your local backend for payments
+const API_URL_APPOINTMENTS =
+  "https://medlist-backend.onrender.com/api/appointment";
+const API_URL_PAYMENTS = "https://medlist-backend.onrender.com/api/payment"; // Your local backend for payments
 
 // Helper function to get patient name, handling null patientId
 const getPatientDisplayName = (patientId) => {
@@ -71,7 +72,7 @@ const PaymentManagementPage = () => {
     useState(false);
   const [selectedAppointmentForPayment, setSelectedAppointmentForPayment] =
     useState(null);
-  const [paymentMethod, setPaymentMethod] = useState("cash"); // Default payment method for update
+  const [paymentMethod, setPaymentMethod] = useState("Cash"); // Enum-compatible default
 
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
@@ -173,9 +174,8 @@ const PaymentManagementPage = () => {
   // --- Payment Modal Handlers ---
   const openUpdatePaymentModal = (appointment) => {
     setSelectedAppointmentForPayment({ ...appointment }); // Create a copy
-    setPaymentMethod(
-      appointment.paymentStatus === "completed" ? "cash" : "cash"
-    ); // Default to cash
+    // Default method remains Cash; can be changed in UI when marking as Completed
+    setPaymentMethod("Cash");
     setIsUpdatePaymentModalOpen(true);
   };
 
@@ -235,17 +235,23 @@ const PaymentManagementPage = () => {
         // If payment status changed to 'completed' AND it wasn't already completed,
         // then send a POST request to record the payment.
         if (
-          selectedAppointmentForPayment.paymentStatus === "completed" &&
-          originalPaymentStatus !== "completed"
+          selectedAppointmentForPayment.paymentStatus === "Completed" &&
+          originalPaymentStatus !== "Completed"
         ) {
           try {
+            const storedUser = JSON.parse(localStorage.getItem("user"));
+            const recordedBy = storedUser?.user?.id || storedUser?.user?._id;
+            if (!recordedBy) {
+              toast.error("Admin identity missing. Please re-login.");
+              return;
+            }
             const paymentPayload = {
-              appointmentId: selectedAppointmentForPayment._id,
+              appointment: selectedAppointmentForPayment._id,
               patient: selectedAppointmentForPayment.patientId._id,
               doctor: selectedAppointmentForPayment.doctorId._id,
               amount: selectedAppointmentForPayment.doctorId?.appointmentFees,
-              paymentMethod: paymentMethod, // Use the selected method from the modal
-              status: "completed",
+              paymentMethod: paymentMethod, // Cash/Card/Online/Other (enum)
+              recordedBy,
             };
             await axios.post(API_URL_PAYMENTS, paymentPayload, {
               headers: {
@@ -265,8 +271,8 @@ const PaymentManagementPage = () => {
             // For now, we'll just log and display an error.
           }
         } else if (
-          selectedAppointmentForPayment.paymentStatus !== "completed" &&
-          originalPaymentStatus === "completed"
+          selectedAppointmentForPayment.paymentStatus !== "Completed" &&
+          originalPaymentStatus === "Completed"
         ) {
           // If status changed from completed to something else, you might want to consider refund/adjustment logic.
           // For now, we'll just show a warning.
@@ -690,7 +696,7 @@ const PaymentManagementPage = () => {
                 </select>
               </div>
 
-              {selectedAppointmentForPayment.paymentStatus === "completed" && (
+              {selectedAppointmentForPayment.paymentStatus === "Completed" && (
                 <div>
                   <label
                     htmlFor="paymentMethod"
@@ -705,10 +711,10 @@ const PaymentManagementPage = () => {
                     onChange={(e) => setPaymentMethod(e.target.value)}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                   >
-                    <option value="cash">Cash</option>
-                    <option value="card">Card</option>
-                    <option value="online">Online</option>
-                    <option value="other">Other</option>
+                    <option value="Cash">Cash</option>
+                    <option value="Card">Card</option>
+                    <option value="Online">Online</option>
+                    <option value="Other">Other</option>
                   </select>
                 </div>
               )}

@@ -17,7 +17,7 @@ const DoctorsListing = () => {
   const [isloading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    fetchFromApi("http://localhost:5000/api/doctor", "GET")
+    fetchFromApi("https://medlist-backend.onrender.com/api/doctor", "GET")
       .then((data) => {
         setAllSpecialists(data.data);
         setIsLoading(false);

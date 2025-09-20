@@ -20,7 +20,7 @@ const MyAppointment = () => {
     }
 
     fetchFromApi(
-      `http://localhost:5000/api/appointment/patient/${patientId}`,
+      `https://medlist-backend.onrender.com/api/appointment/patient/${patientId}`,
       "GET"
     )
       .then((data) => {

@@ -94,8 +94,8 @@ const AppointmentBooking = () => {
     const fetchData = async () => {
       try {
         const [doctorsRes, patientsRes] = await Promise.all([
-          fetch("http://localhost:5000/api/doctor"),
-          fetch("http://localhost:5000/api/patient"),
+          fetch("https://medlist-backend.onrender.com/api/doctor"),
+          fetch("https://medlist-backend.onrender.com/api/patient"),
         ]);
 
         if (!doctorsRes.ok) throw new Error("Failed to fetch doctors");
@@ -210,6 +210,12 @@ const AppointmentBooking = () => {
 
   const handleBookAppointment = async () => {
     if (validateForm()) {
+      // Ensure admin is authenticated before attempting to book
+      const adminToken = localStorage.getItem("admin_token");
+      if (!adminToken) {
+        alert("Admin not authenticated. Please log in and try again.");
+        return;
+      }
       const appointmentData = {
         patientId: selectedPatient._id,
         doctorId: selectedDoctor._id,
@@ -222,11 +228,13 @@ const AppointmentBooking = () => {
       };
       try {
         const response = await fetch(
-          "http://localhost:5000/api/appointment/create",
+          "https://medlist-backend.onrender.com/api/appointment/create",
           {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
+              // Include admin auth token as required by backend auth middleware
+              authorization: `Bearer ${adminToken}`,
             },
 
             body: JSON.stringify(appointmentData),

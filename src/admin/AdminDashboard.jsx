@@ -19,21 +19,21 @@
 //   const [patients, setPatients] = useState([]);
 
 //   useEffect(() => {
-//     fetchFromApi("http://localhost:5000/api/appointment", "get")
+//     fetchFromApi("https://medlist-backend.onrender.com/api/appointment", "get")
 //       .then((data) => {
 //         setAppointments(data);
 //       })
 //       .catch((error) => {
 //         console.error("Error fetching data:", error.message);
 //       });
-//     fetchFromApi("http://localhost:5000/api/doctor", "get", null)
+//     fetchFromApi("https://medlist-backend.onrender.com/api/doctor", "get", null)
 //       .then((data) => {
 //         setDoctors(data.data);
 //       })
 //       .catch((error) => {
 //         console.error("Error fetching data:", error.message);
 //       });
-//     fetchFromApi("http://localhost:5000/api/patient", "get")
+//     fetchFromApi("https://medlist-backend.onrender.com/api/patient", "get")
 //       .then((data) => {
 //         setPatients(data.data);
 //       })
@@ -269,7 +269,8 @@ export default function AdminDashboard() {
     const loadDashboard = async () => {
       try {
         const base =
-          import.meta.env.VITE_API_BASE || "http://localhost:5000/api";
+          import.meta.env.VITE_API_BASE ||
+          "https://medlist-backend.onrender.com/api";
         const res = await fetchFromApi(`${base}/admin/dashboard`, "get");
         if (res && res.success) {
           const { stats, weeklyTrend, demographics, appointments } = res.data;
@@ -397,7 +398,7 @@ export default function AdminDashboard() {
                     try {
                       const base =
                         import.meta.env.VITE_API_BASE ||
-                        "http://localhost:5000/api";
+                        "https://medlist-backend.onrender.com/api";
                       const res = await fetchFromApi(
                         `${base}/admin/dashboard`,
                         "get"

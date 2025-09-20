@@ -10,7 +10,9 @@ const Recommendation = ({ speciality }) => {
 
   const getRelatedDocs = async () => {
     try {
-      let response = await fetch("http://localhost:5000/api/doctor");
+      let response = await fetch(
+        "https://medlist-backend.onrender.com/api/doctor"
+      );
       let apiResponse = await response.json();
 
       if (apiResponse.data && apiResponse.data.length > 0) {

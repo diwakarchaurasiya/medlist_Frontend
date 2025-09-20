@@ -15,7 +15,7 @@ const DoctorsAppointments = () => {
   useEffect(() => {
     // Fetch Doctorsappointments data from the API
     fetchFromApi(
-      `http://localhost:5000/api/appointment/doctor/${doctorId}`,
+      `https://medlist-backend.onrender.com/api/appointment/doctor/${doctorId}`,
       "get"
     )
       .then((data) => {
@@ -30,9 +30,13 @@ const DoctorsAppointments = () => {
   console.log(Doctorsappointments);
   // Function to handle appointment status update
   const handleStatusUpdate = (id, status) => {
-    fetchFromApi(`http://localhost:5000/api/appointment/${id}`, "PUT", {
-      status: status,
-    })
+    fetchFromApi(
+      `https://medlist-backend.onrender.com/api/appointment/${id}`,
+      "PUT",
+      {
+        status: status,
+      }
+    )
       .then(() => {
         toast.success(`Appointment marked as ${status}`);
         // Update the local state to reflect the new status
@@ -52,7 +56,7 @@ const DoctorsAppointments = () => {
 
   // Function to handle appointment deletion
   //   const handleDelete = (id) => {
-  //     fetchFromApi(`http://localhost:5000/api/appointment/${id}`, "delete")
+  //     fetchFromApi(`https://medlist-backend.onrender.com/api/appointment/${id}`, "delete")
   //       .then(() => {
   //         toast.success("Appointment deleted successfully");
   //         // Remove the appointment from the local state

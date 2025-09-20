@@ -228,7 +228,8 @@ export default function DoctorDashboard() {
     const loadDashboard = async () => {
       try {
         const base =
-          import.meta.env.VITE_API_BASE || "http://localhost:5000/api";
+          import.meta.env.VITE_API_BASE ||
+          "https://medlist-backend.onrender.com/api";
         const res = await fetchFromApi(`${base}/doctor/dashboard/data`, "get");
         if (res && res.success) {
           const {
@@ -303,7 +304,7 @@ export default function DoctorDashboard() {
                     try {
                       const base =
                         import.meta.env.VITE_API_BASE ||
-                        "http://localhost:5000/api";
+                        "https://medlist-backend.onrender.com/api";
                       const res = await fetchFromApi(
                         `${base}/doctor/dashboard/data`,
                         "get"

@@ -25,7 +25,7 @@ const ImageUpload = () => {
       const formData = new FormData();
       formData.append("profileImage", selectedImage);
       const response = await fetch(
-        "http://localhost:5000/api/doctor/image/6777c83cc131acc823b7c7c9",
+        "https://medlist-backend.onrender.com/api/doctor/image/6777c83cc131acc823b7c7c9",
         {
           method: "put",
           body: formData,
